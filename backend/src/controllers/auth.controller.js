@@ -75,3 +75,10 @@ export const loginController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const googleAuthCallbackController = async (req, res, next) => {
+  const user=req.user;
+  console.log("Google user profile:", user);
+
+  res.redirect("http://localhost:5173/");
+}
