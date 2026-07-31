@@ -77,8 +77,25 @@ export const loginController = async (req, res, next) => {
 };
 
 export const googleAuthCallbackController = async (req, res, next) => {
-  const user=req.user;
-  console.log("Google user profile:", user);
+  const { id, emails, displayName } = req.user;
+  const email = emails[0].value;
+
+  let user = await userModel.findOne({ email });
+
+  if (!user) {
+    user = await userModel.create({
+      email,
+      fullName: displayName,
+      role: "buyer",
+      googleId: id,
+    });
+  }
+
+  const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+    expiresIn: "3d",
+  });
+
+  res.cookie("token", token);
 
   res.redirect("http://localhost:5173/");
-}
+};
