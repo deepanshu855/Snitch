@@ -25,10 +25,26 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
   throw error;
 }
 
+if( !process.env.IMAGEKIT_PUBLIC_KEY) {
+  const error = new Error(
+    "IMAGEKIT_PUBLIC_KEY is not defined in environment variables",
+  );
+  throw error;
+}
+
+if( !process.env.IMAGEKIT_PRIVATE_KEY) {
+  const error = new Error(
+    "IMAGEKIT_PRIVATE_KEY is not defined in environment variables",
+  );
+  throw error;
+}
+
 export const config = {
   NODE_ENV: process.env.NODE_ENV,
   MONGO_URI: process.env.MONGO_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
 };

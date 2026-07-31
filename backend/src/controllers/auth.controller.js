@@ -99,3 +99,17 @@ export const googleAuthCallbackController = async (req, res, next) => {
 
   res.redirect("http://localhost:5173/");
 };
+
+export const getMeController= async (req, res, next)=>{
+  const userId = req.user.id;
+
+  const user= await userModel.findById(userId).select("-password");
+
+  if(!user){
+    const error= new Error("User not found");
+    error.status=404;
+    return next(error);
+  }
+
+  sendTokenResponse(res, user, "User fetched successfully");
+}

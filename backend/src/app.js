@@ -36,8 +36,10 @@ app.get("/", (req, res) => {
 
 // Routes
 import authRouter from "./routes/auth.routes.js";
+import productRouter from "./routes/product.routes.js";
 
 app.use("/api/auth", authRouter);
+app.use("/api/products", productRouter);
 
 app.use(errorHandler);
 
