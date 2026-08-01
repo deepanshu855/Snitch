@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
-import { motion } from "framer-motion";
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Check, Phone } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../hooks/useAuth.js";
 import { NavLink, useNavigate } from "react-router-dom";
 import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
@@ -8,6 +8,8 @@ import ContinueWithGoogle from "../components/ContinueWithGoogle.jsx";
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSeller, setIsSeller] = useState(false);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -21,6 +23,7 @@ function Register() {
       ...prev,
       [name]: value,
     }));
+    if (error) setError("");
   };
 
   const { handleRegister } = useAuth();
@@ -28,231 +31,273 @@ function Register() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await handleRegister({ ...formData, isSeller });
+      await handleRegister({
+        fullname: formData.fullname,
+        email: formData.email,
+        contact: formData.contact,
+        password: formData.password,
+        isSeller,
+      });
       navigate("/");
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to register. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen lg:h-screen w-full bg-[#0a0a0a] text-white flex overflow-y-auto lg:overflow-hidden font-sans">
-      {/* Left Side - Hero Section */}
-      <motion.div
-        className="hidden lg:flex w-[55%] relative flex-col justify-between p-12 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-left"
-          style={{ backgroundImage: "url('/luxury_fashion_hero.png')" }}
-        />
+    <div className="bg-[#F8F6F2] text-[#1F1F1F] font-sans antialiased min-h-screen lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row relative selection:bg-[#D4AF37] selection:text-white">
 
-        {/* Decorative Gold Circle Outline matching the design */}
-        <div className="absolute top-1/2 -translate-y-1/2 -left-[15%] w-[800px] h-[800px] rounded-full border-[1.5px] border-[#E2B961]/30 pointer-events-none z-0" />
-
-        {/* Dark Gradients for text visibility and blending */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0a0a0a]/90 via-[#0a0a0a]/40 to-[#0a0a0a]" />
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
-        <div className="absolute inset-0 z-0 bg-black/20" />
-
-        <div className="relative z-10">
-          <motion.h1
-            className="text-[#E2B961] text-3xl font-bold tracking-[0.4em]"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            S N I T C H
-          </motion.h1>
-        </div>
-
-        <div className="relative z-10 pb-8">
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            <p className="text-[#E2B961] text-lg tracking-[0.1em] leading-relaxed font-light">
-              STYLE IS A CHOICE.
-              <br />
-              MAKE YOURS.
-            </p>
-            <div className="h-[1px] w-12 bg-[#E2B961] mt-5" />
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Right Side - Form Section */}
-      <div className="w-full lg:w-[45%] flex items-center justify-center p-6 relative z-10 bg-[#0a0a0a]">
+      {/* Desktop Background Curve Image */}
+      <div className="hidden lg:block absolute top-[-15vh] left-[-20vw] w-[70vw] h-[130vh] rounded-[50%] overflow-hidden z-0 shadow-[inset_0_0_80px_#F8F6F2]">
         <motion.div
-          className="w-full max-w-[440px] bg-[#111111] border border-[#222] rounded-2xl p-8 lg:p-10 shadow-2xl relative"
+          className="absolute inset-0 bg-cover bg-[80%_25%]"
+          style={{ backgroundImage: "url('/luxury_editorial_bg.png')" }}
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+        {/* Soft edge masking and blending */}
+        <div className="absolute inset-0 shadow-[inset_0_0_120px_#F8F6F2] mix-blend-overlay"></div>
+        <div className="absolute inset-0 shadow-[inset_0_0_80px_#F8F6F2]"></div>
+
+        {/* Subtle metallic gold outline */}
+        <div className="absolute inset-0 rounded-[50%] border-[1.5px] border-[#D4AF37]/40 pointer-events-none"></div>
+      </div>
+
+      {/* Decorative Golden Lines Desktop */}
+      <svg className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none opacity-30 z-0">
+        <path d="M-10vw,20vh Q 35vw,50vh 25vw,120vh" fill="none" stroke="#D4AF37" strokeWidth="1" />
+        <path d="M-5vw,10vh Q 45vw,60vh 30vw,110vh" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
+      </svg>
+
+      {/* Mobile Stacked Image Header */}
+      <div className="lg:hidden w-full h-[40vh] relative z-0 overflow-hidden rounded-b-[40px] shadow-sm">
+        <motion.div
+          className="absolute inset-0 bg-cover bg-[80%_25%]"
+          style={{ backgroundImage: "url('/luxury_editorial_bg.png')" }}
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+        <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(248,246,242,0.8)] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#F8F6F2] via-transparent to-transparent pointer-events-none"></div>
+      </div>
+
+      {/* Left Side: Editorial Typography (Desktop 58%) */}
+      <div className="relative z-10 w-full lg:w-[58%] h-auto lg:h-full flex flex-col justify-between p-6 lg:p-16 pt-6 lg:pt-16">
+
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="relative z-20 hidden lg:block"
+        >
+          <div className="text-[32px] font-bold text-[#D4AF37] tracking-[0.4em] uppercase">
+            SNITCH
+          </div>
+        </motion.div>
+
+        {/* Mobile Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative z-20 lg:hidden text-center mb-6 mt-4"
+        >
+          <div className="text-[16px] font-bold text-[#D4AF37] tracking-[0.3em] uppercase">
+            SNITCH
+          </div>
+        </motion.div>
+
+        {/* Hero Text */}
+        <motion.div
+          className="relative z-20 mb-4 lg:mb-[20vh] max-w-[420px] mx-auto lg:mx-0 text-center lg:text-left"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 1 }}
+        >
+          <h1 className="text-[40px] lg:text-[54px] font-semibold text-[#1F1F1F] leading-[1.05] tracking-tight mb-4" style={{ fontFamily: "Geist, Inter, sans-serif" }}>
+            Own Your <span className="text-[#D4AF37]">Style.</span>
+          </h1>
+          <p className="text-[15px] lg:text-[17px] text-[#555555] mb-8 font-medium leading-relaxed">
+            Premium fashion crafted for everyday confidence.
+          </p>
+          <a
+            className="group inline-flex items-center text-[14px] font-bold tracking-[0.1em] text-[#D4AF37] uppercase relative pb-1"
+            href="#"
+          >
+            <span>Explore Collection</span>
+            <ArrowRight size={18} strokeWidth={2.5} className="ml-3 group-hover:translate-x-2 transition-transform duration-500 ease-out" />
+            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#D4AF37] group-hover:w-full transition-all duration-500 ease-out"></div>
+          </a>
+        </motion.div>
+      </div>
+
+      {/* Right Side: Registration Form (Desktop 42%) */}
+      <div className="w-full lg:w-[42%] flex items-center justify-center p-4 md:p-8 lg:p-12 z-20 relative bg-[#F8F6F2] lg:bg-transparent">
+        <motion.div
+          className="w-full max-w-[440px] bg-[#FFFFFF] rounded-[24px] p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-[#ECE7DE]"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-10 text-center">
-            <h1 className="text-[#E2B961] text-2xl font-bold tracking-[0.3em]">
-              S N I T C H
-            </h1>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2 text-white">
+          <div className="mb-6 text-center lg:text-left">
+            <h2 className="text-[28px] font-semibold text-[#1F1F1F] mb-1 tracking-tight">
               Create Account
             </h2>
-            <p className="text-[#888] text-sm">
-              Join Snitch and elevate your style.
+            <p className="text-[14px] text-[#777777] font-medium">
+              Join the SNITCH community.
             </p>
           </div>
 
           <form className="space-y-4" onSubmit={handleFormSubmit}>
-            {/* Name Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#666]">
-                <User size={18} strokeWidth={1.5} />
-              </div>
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-[#ba1a1a] text-[13px] bg-[#ffdad6] px-4 py-2.5 rounded-[10px] mb-3 font-medium"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Full Name */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999999] group-focus-within:text-[#D4AF37] transition-colors duration-300">
+                <User size={18} strokeWidth={2} />
+              </span>
               <input
+                className="w-full h-[50px] pl-11 pr-4 bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] text-[14px] text-[#1F1F1F] placeholder:text-[#999999] font-medium focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300"
+                placeholder="Full Name"
                 type="text"
                 name="fullname"
                 value={formData.fullname}
                 onChange={handleInputChange}
-                placeholder="Full Name"
-                className="w-full bg-transparent text-white border border-[#333] rounded-lg py-3.5 pl-12 pr-4 focus:outline-none focus:border-[#E2B961] transition-colors placeholder:text-[#555] text-sm"
+                required
               />
             </div>
 
-            {/* Email Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#666]">
-                <Mail size={18} strokeWidth={1.5} />
-              </div>
+            {/* Email */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999999] group-focus-within:text-[#D4AF37] transition-colors duration-300">
+                <Mail size={18} strokeWidth={2} />
+              </span>
               <input
+                className="w-full h-[50px] pl-11 pr-4 bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] text-[14px] text-[#1F1F1F] placeholder:text-[#999999] font-medium focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300"
+                placeholder="Email Address"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Email Address"
-                className="w-full bg-transparent text-white border border-[#333] rounded-lg py-3.5 pl-12 pr-4 focus:outline-none focus:border-[#E2B961] transition-colors placeholder:text-[#555] text-sm"
+                required
               />
             </div>
 
-            {/* Contact Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#666]">
-                <Phone size={18} strokeWidth={1.5} />
-              </div>
+            {/* Contact */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999999] group-focus-within:text-[#D4AF37] transition-colors duration-300">
+                <Phone size={18} strokeWidth={2} />
+              </span>
               <input
+                className="w-full h-[50px] pl-11 pr-4 bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] text-[14px] text-[#1F1F1F] placeholder:text-[#999999] font-medium focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300"
+                placeholder="Contact Number"
                 type="tel"
                 name="contact"
                 value={formData.contact}
                 onChange={handleInputChange}
-                placeholder="Contact Number"
-                className="w-full bg-transparent text-white border border-[#333] rounded-lg py-3.5 pl-12 pr-4 focus:outline-none focus:border-[#E2B961] transition-colors placeholder:text-[#555] text-sm"
+                required
               />
             </div>
 
-            {/* Password Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#666]">
-                <Lock size={18} strokeWidth={1.5} />
-              </div>
+            {/* Password */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999999] group-focus-within:text-[#D4AF37] transition-colors duration-300">
+                <Lock size={18} strokeWidth={2} />
+              </span>
               <input
+                className="w-full h-[50px] pl-11 pr-11 bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] text-[14px] text-[#1F1F1F] placeholder:text-[#999999] font-medium focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300"
+                placeholder="Password"
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Password"
-                className="w-full bg-transparent text-white border border-[#333] rounded-lg py-3.5 pl-12 pr-12 focus:outline-none focus:border-[#E2B961] transition-colors placeholder:text-[#555] text-sm"
+                required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#666] hover:text-white transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#D4AF37] transition-colors duration-300"
               >
-                {showPassword ? (
-                  <EyeOff size={18} strokeWidth={1.5} />
-                ) : (
-                  <Eye size={18} strokeWidth={1.5} />
-                )}
+                {showPassword ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
               </button>
             </div>
 
-            {/* Seller Checkbox */}
-            <div className="flex items-center space-x-3 pt-1 pb-2">
-              <div
-                onClick={() => setIsSeller(!isSeller)}
-                className={`w-[18px] h-[18px] rounded-[4px] border flex items-center justify-center cursor-pointer transition-colors ${
-                  isSeller
-                    ? "bg-[#E2B961] border-[#E2B961]"
-                    : "border-[#555] bg-transparent hover:border-[#777]"
-                }`}
-              >
-                {isSeller && (
-                  <svg
-                    className="w-3.5 h-3.5 text-black"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3.5}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
+            {/* Register as Seller Checkbox (Simple) */}
+            <label className="flex items-center space-x-3 cursor-pointer py-1 group w-max">
+              <div className="relative flex items-center justify-center w-5 h-5">
+                <input
+                  type="checkbox"
+                  checked={isSeller}
+                  onChange={() => setIsSeller(!isSeller)}
+                  className="peer appearance-none w-5 h-5 border-2 border-[#D4AF37] rounded-[4px] checked:bg-[#D4AF37] transition-all cursor-pointer"
+                />
+                <Check size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none stroke-[4]" />
               </div>
-              <span
-                className="text-sm text-[#888] cursor-pointer select-none font-medium hover:text-white transition-colors"
-                onClick={() => setIsSeller(!isSeller)}
-              >
+              <span className="text-[14px] font-semibold text-[#1F1F1F] group-hover:text-[#1F1F1F] transition-colors">
                 Register as Seller
               </span>
-            </div>
+            </label>
 
             {/* Submit Button */}
             <motion.button
+              whileHover={{ y: -1, boxShadow: "0 6px 20px rgba(212,175,55,0.25)" }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full h-[50px] mt-2 bg-[#D4AF37] hover:bg-[#B88A18] text-[#1F1F1F] text-[14px] font-bold rounded-[12px] transition-all flex items-center justify-center tracking-wide"
               type="submit"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              className="w-full bg-[#E2B961] text-black font-semibold rounded-lg py-3.5 shadow-md hover:bg-[#d6aa52] transition-colors text-sm tracking-wide mt-2"
             >
-              REGISTER
+              Create Account
             </motion.button>
           </form>
 
-          <div className="my-7 flex items-center">
-            <div className="flex-1 border-t border-[#222]"></div>
-            <span className="px-4 text-[11px] text-[#555] uppercase tracking-widest">
-              or
+          {/* Divider */}
+          <div className="flex items-center my-5 opacity-70">
+            <div className="flex-grow border-t border-[#ECE7DE]"></div>
+            <span className="px-3 text-[10px] font-bold tracking-[0.15em] text-[#999999] uppercase">
+              OR
             </span>
-            <div className="flex-1 border-t border-[#222]"></div>
+            <div className="flex-grow border-t border-[#ECE7DE]"></div>
           </div>
 
+          {/* Social Button */}
           <motion.a
             href="/api/auth/google"
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            className="w-full bg-transparent border border-[#333] text-white font-medium rounded-lg py-3.5 flex items-center justify-center space-x-3 hover:bg-[#1a1a1a] transition-colors text-sm"
+            whileHover={{ y: -1, backgroundColor: "#FAFAFA", boxShadow: "0 4px 15px rgba(0,0,0,0.03)" }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full h-[50px] bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] transition-all flex items-center justify-center hover:border-[#D4AF37]/50 text-[#1F1F1F] text-[13px] font-bold space-x-3 cursor-pointer"
           >
             <ContinueWithGoogle />
           </motion.a>
 
-          <p className="text-center text-[#777] mt-8 text-sm">
-            Already have an account?{" "}
-            <NavLink
-              to="/login"
-              className="text-[#E2B961] font-medium hover:underline transition-all"
-            >
-              Login
-            </NavLink>
-          </p>
+          {/* Login Link */}
+          <div className="text-center mt-6">
+            <p className="text-[14px] text-[#777777] font-medium">
+              Already have an account?{" "}
+              <NavLink
+                to="/login"
+                className="text-[#D4AF37] font-bold hover:text-[#B88A18] transition-colors relative group inline-block"
+              >
+                Login
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#D4AF37] group-hover:w-full transition-all duration-300"></span>
+              </NavLink>
+            </p>
+          </div>
         </motion.div>
       </div>
     </div>

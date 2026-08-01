@@ -35,3 +35,15 @@ export const createProductController = async (req, res, next) => {
     product,
   });
 };
+
+export const getAllProductsController = async (req, res, next) => {
+  const sellerId = req.user.id;
+
+  const products = await productModel.find({ seller: sellerId });
+
+  res.status(200).json({
+    success: true,
+    message: "Products fetched successfully",
+    products,
+  });
+};
