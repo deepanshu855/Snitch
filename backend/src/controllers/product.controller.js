@@ -15,6 +15,9 @@ export const createProductController = async (req, res, next) => {
 
   const sellerId = req.user.id;
 
+  // console.log(images);
+  // console.log(typeof images);
+
   const product = await productModel.create({
     title,
     description,
