@@ -36,7 +36,7 @@ export const createProductController = async (req, res, next) => {
   });
 };
 
-export const getAllProductsController = async (req, res, next) => {
+export const getSellerProductsController = async (req, res, next) => {
   const sellerId = req.user.id;
 
   const products = await productModel.find({ seller: sellerId });
