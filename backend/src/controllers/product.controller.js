@@ -47,3 +47,31 @@ export const getSellerProductsController = async (req, res, next) => {
     products,
   });
 };
+
+export const getAllProductsControler= async (req, res, next)=> {
+  const products=await productModel.find();
+
+  res.status(200).json({
+    success:true,
+    message:"Products fetched successfully",
+    products
+  })
+}
+
+export const productDetailsController= async (req, res, next) => {
+  const {productId}=req.params;
+
+  const product=await productModel.findById(productId);
+
+  if(!product){
+    const error=new Error("Product not found");
+    error.status=404;
+    return next(error);
+  }
+
+  res.status(200).json({
+    success:true,
+    message:"Product details fetched successfully",
+    product
+  })
+}

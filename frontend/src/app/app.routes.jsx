@@ -5,11 +5,13 @@ import { path } from "framer-motion/client";
 import CreateProduct from "../features/products/pages/CreateProduct";
 import Dashboard from "../features/products/pages/Dashboard";
 import Protected from "../features/auth/components/Protected";
+import Home from "../features/products/pages/Home";
+import ProductDetails from "../features/products/pages/ProductDetails";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <h1>Home</h1>,
+    element: <Home />,
   },
   {
     path: "/login",
@@ -18,6 +20,10 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/:id",
+    element: <ProductDetails />
   },
   {
     path: "/seller",

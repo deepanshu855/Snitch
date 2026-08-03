@@ -14,3 +14,13 @@ export const getSellerProducts = async () => {
   const response = await instance.get("/seller");
   return response.data;
 };
+
+export const getAllProducts = async () => {
+  const response = await instance.get("/");
+  return response.data;
+};
+
+export const getProductDetails = async (productId) => {
+  const response = await instance.get(`/${productId}`);
+  return response.data;
+};

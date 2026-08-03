@@ -1,5 +1,5 @@
 import { CloudCog } from "lucide-react";
-import { createProduct, getSellerProducts } from "../services/product.api.js";
+import { createProduct, getAllProducts, getProductDetails, getSellerProducts } from "../services/product.api.js";
 import { setSellerProducts, setProducts } from "../state/product.slice.js";
 import { useDispatch } from "react-redux";
 
@@ -17,5 +17,16 @@ export const useProducts = () => {
     return data.products;
   };
 
-  return { handleCreateProduct, handleGetSellerProducts };
+  const handleGetAllProducts= async () => {
+    const data= await getAllProducts();
+    dispatch(setProducts(data.products));
+    return data.products;
+  }
+
+  const handleGetProductDetails= async(productId)=>{
+    const data= await getProductDetails(productId);
+    return data.product;
+  }
+
+  return { handleCreateProduct, handleGetSellerProducts, handleGetAllProducts, handleGetProductDetails };
 };
