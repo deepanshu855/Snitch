@@ -129,7 +129,7 @@ const Home = () => {
                         key={product._id} 
                         variants={itemVariants}
                         className="group cursor-pointer flex flex-col"
-                        onClick={() => navigate(`/product/${product._id}`)}
+                        onClick={() => navigate(`/${product._id}`)}
                     >
                         {/* Image Container */}
                         <div className="w-full aspect-[3/4] bg-[#F5F3EF] mb-6 overflow-hidden relative border border-transparent group-hover:border-[#D8B03B]/40 transition-all duration-500">

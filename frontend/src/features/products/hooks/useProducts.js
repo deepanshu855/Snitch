@@ -1,6 +1,15 @@
 import { CloudCog } from "lucide-react";
-import { createProduct, getAllProducts, getProductDetails, getSellerProducts } from "../services/product.api.js";
-import { setSellerProducts, setProducts } from "../state/product.slice.js";
+import {
+  createProduct,
+  getAllProducts,
+  getProductDetails,
+  getSellerProducts,
+} from "../services/product.api.js";
+import {
+  setSellerProducts,
+  setProducts,
+  setProduct,
+} from "../state/product.slice.js";
 import { useDispatch } from "react-redux";
 
 export const useProducts = () => {
@@ -17,16 +26,22 @@ export const useProducts = () => {
     return data.products;
   };
 
-  const handleGetAllProducts= async () => {
-    const data= await getAllProducts();
+  const handleGetAllProducts = async () => {
+    const data = await getAllProducts();
     dispatch(setProducts(data.products));
     return data.products;
-  }
+  };
 
-  const handleGetProductDetails= async(productId)=>{
-    const data= await getProductDetails(productId);
+  const handleGetProductDetails = async (productId) => {
+    const data = await getProductDetails(productId);
+    dispatch(setProduct(data.product));
     return data.product;
-  }
+  };
 
-  return { handleCreateProduct, handleGetSellerProducts, handleGetAllProducts, handleGetProductDetails };
+  return {
+    handleCreateProduct,
+    handleGetSellerProducts,
+    handleGetAllProducts,
+    handleGetProductDetails,
+  };
 };

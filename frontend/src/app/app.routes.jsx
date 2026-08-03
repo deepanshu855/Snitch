@@ -7,6 +7,7 @@ import Dashboard from "../features/products/pages/Dashboard";
 import Protected from "../features/auth/components/Protected";
 import Home from "../features/products/pages/Home";
 import ProductDetails from "../features/products/pages/ProductDetails";
+import Cart from "../features/cart/pages/Cart";
 
 export const router = createBrowserRouter([
   {
@@ -46,4 +47,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/cart",
+    element: <Protected><Cart /></Protected>
+  }
 ]);
