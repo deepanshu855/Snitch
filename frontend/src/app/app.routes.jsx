@@ -1,13 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../features/auth/pages/Login";
 import Register from "../features/auth/pages/Register";
-import { path } from "framer-motion/client";
 import CreateProduct from "../features/products/pages/CreateProduct";
 import Dashboard from "../features/products/pages/Dashboard";
 import Protected from "../features/auth/components/Protected";
 import Home from "../features/products/pages/Home";
 import ProductDetails from "../features/products/pages/ProductDetails";
 import Cart from "../features/cart/pages/Cart";
+import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 
 export const router = createBrowserRouter([
   {
@@ -23,8 +23,8 @@ export const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/:id",
-    element: <ProductDetails />
+    path: "/product/:id",
+    element: <ProductDetails />,
   },
   {
     path: "/seller",
@@ -45,10 +45,22 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: "/seller/product/:id",
+        element: (
+          <Protected role="seller">
+            <SellerProductDetails />
+          </Protected>
+        ),
+      },
     ],
   },
   {
     path: "/cart",
-    element: <Protected><Cart /></Protected>
-  }
+    element: (
+      <Protected>
+        <Cart />
+      </Protected>
+    ),
+  },
 ]);

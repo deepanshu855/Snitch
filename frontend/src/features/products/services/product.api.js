@@ -24,3 +24,8 @@ export const getProductDetails = async (productId) => {
   const response = await instance.get(`/${productId}`);
   return response.data;
 };
+
+export const addProductVariant = async (productId, formData) => {
+  const response = await instance.post(`/${productId}/variants`, formData);
+  return response.data;
+};

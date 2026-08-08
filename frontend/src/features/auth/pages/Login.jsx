@@ -29,8 +29,9 @@ function Login() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await handleLogin(formData);
-      navigate("/");
+      const user = await handleLogin(formData);
+      if (user.role === "seller") navigate("/seller/dashboard");
+      else navigate("/");
     } catch (err) {
       console.error(err);
       setError("Failed to login. Please check your credentials.");
@@ -39,7 +40,6 @@ function Login() {
 
   return (
     <div className="bg-[#F8F6F2] text-[#1F1F1F] font-sans antialiased min-h-screen lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row relative selection:bg-[#D4AF37] selection:text-white">
-      
       {/* Desktop Background Curve Image */}
       <div className="hidden lg:block absolute top-[-15vh] left-[-20vw] w-[70vw] h-[130vh] rounded-[50%] overflow-hidden z-0 shadow-[inset_0_0_80px_#F8F6F2]">
         <motion.div
@@ -59,8 +59,18 @@ function Login() {
 
       {/* Decorative Golden Lines Desktop */}
       <svg className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none opacity-30 z-0">
-        <path d="M-10vw,20vh Q 35vw,50vh 25vw,120vh" fill="none" stroke="#D4AF37" strokeWidth="1" />
-        <path d="M-5vw,10vh Q 45vw,60vh 30vw,110vh" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
+        <path
+          d="M-10vw,20vh Q 35vw,50vh 25vw,120vh"
+          fill="none"
+          stroke="#D4AF37"
+          strokeWidth="1"
+        />
+        <path
+          d="M-5vw,10vh Q 45vw,60vh 30vw,110vh"
+          fill="none"
+          stroke="#D4AF37"
+          strokeWidth="0.5"
+        />
       </svg>
 
       {/* Mobile Stacked Image Header */}
@@ -78,7 +88,6 @@ function Login() {
 
       {/* Left Side: Editorial Typography (Desktop 58%) */}
       <div className="relative z-10 w-full lg:w-[58%] h-auto lg:h-full flex flex-col justify-between p-6 lg:p-16 pt-6 lg:pt-16">
-        
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -110,7 +119,10 @@ function Login() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 1 }}
         >
-          <h1 className="text-[40px] lg:text-[54px] font-semibold text-[#1F1F1F] leading-[1.05] tracking-tight mb-4" style={{ fontFamily: "Geist, Inter, sans-serif" }}>
+          <h1
+            className="text-[40px] lg:text-[54px] font-semibold text-[#1F1F1F] leading-[1.05] tracking-tight mb-4"
+            style={{ fontFamily: "Geist, Inter, sans-serif" }}
+          >
             Welcome <span className="text-[#D4AF37]">Back.</span>
           </h1>
           <p className="text-[15px] lg:text-[17px] text-[#555555] mb-8 font-medium leading-relaxed">
@@ -121,7 +133,11 @@ function Login() {
             href="#"
           >
             <span>Explore Collection</span>
-            <ArrowRight size={18} strokeWidth={2.5} className="ml-3 group-hover:translate-x-2 transition-transform duration-500 ease-out" />
+            <ArrowRight
+              size={18}
+              strokeWidth={2.5}
+              className="ml-3 group-hover:translate-x-2 transition-transform duration-500 ease-out"
+            />
             <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#D4AF37] group-hover:w-full transition-all duration-500 ease-out"></div>
           </a>
         </motion.div>
@@ -193,7 +209,11 @@ function Login() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#D4AF37] transition-colors duration-300"
               >
-                {showPassword ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={2} />
+                ) : (
+                  <Eye size={18} strokeWidth={2} />
+                )}
               </button>
             </div>
 
@@ -208,7 +228,10 @@ function Login() {
 
             {/* Submit Button */}
             <motion.button
-              whileHover={{ y: -1, boxShadow: "0 6px 20px rgba(212,175,55,0.25)" }}
+              whileHover={{
+                y: -1,
+                boxShadow: "0 6px 20px rgba(212,175,55,0.25)",
+              }}
               whileTap={{ scale: 0.98 }}
               className="w-full h-[50px] mt-2 bg-[#D4AF37] hover:bg-[#B88A18] text-[#1F1F1F] text-[14px] font-bold rounded-[12px] transition-all flex items-center justify-center tracking-wide"
               type="submit"
@@ -229,7 +252,11 @@ function Login() {
           {/* Social Button */}
           <motion.a
             href="/api/auth/google"
-            whileHover={{ y: -1, backgroundColor: "#FAFAFA", boxShadow: "0 4px 15px rgba(0,0,0,0.03)" }}
+            whileHover={{
+              y: -1,
+              backgroundColor: "#FAFAFA",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.03)",
+            }}
             whileTap={{ scale: 0.98 }}
             className="w-full h-[50px] bg-[#FFFFFF] border border-[#ECE7DE] rounded-[12px] transition-all flex items-center justify-center hover:border-[#D4AF37]/50 text-[#1F1F1F] text-[13px] font-bold space-x-3 cursor-pointer"
           >

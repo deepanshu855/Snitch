@@ -1,5 +1,6 @@
 import { CloudCog } from "lucide-react";
 import {
+  addProductVariant,
   createProduct,
   getAllProducts,
   getProductDetails,
@@ -38,10 +39,17 @@ export const useProducts = () => {
     return data.product;
   };
 
+  const handleAddVariant = async (productId, formData) => {
+    const data = await addProductVariant(productId, formData);
+    dispatch(setProduct(data.product));
+    return data.product;
+  };
+
   return {
     handleCreateProduct,
     handleGetSellerProducts,
     handleGetAllProducts,
     handleGetProductDetails,
+    handleAddVariant,
   };
 };

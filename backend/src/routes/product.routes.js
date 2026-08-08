@@ -5,6 +5,7 @@ import {
   getAllProductsControler,
   getSellerProductsController,
   productDetailsController,
+  addProductVariant,
 } from "../controllers/product.controller.js";
 import { productValidator } from "../validators/product.validator.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -21,6 +22,12 @@ productRouter.post(
 
 productRouter.get("/seller", authenticateSeller, getSellerProductsController);
 productRouter.get("/", getAllProductsControler);
-productRouter.get("/:productId", productDetailsController)
+productRouter.get("/:productId", productDetailsController);
+productRouter.post(
+  "/:productId/variants",
+  authenticateSeller,
+  upload.array("images", 7),
+  addProductVariant,
+);
 
 export default productRouter;
