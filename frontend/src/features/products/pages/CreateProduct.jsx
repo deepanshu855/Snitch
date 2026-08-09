@@ -98,26 +98,14 @@ function CreateProduct() {
     return (
         <div className="bg-[#F9F8F5] text-[#1F1F1F] font-sans min-h-screen flex flex-col selection:bg-[#D8B03B] selection:text-white pb-12">
 
-            {/* Top Navigation - Integrated seamlessly */}
-            <nav className="h-[80px] flex items-center justify-between px-8 lg:px-16 shrink-0">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 text-[#D8B03B] hover:bg-[#F0EFEB] rounded-full transition-colors"
-                    >
-                        <ArrowLeft size={24} strokeWidth={1.5} />
-                    </button>
-                    <span className="text-[20px] font-bold text-[#D8B03B] tracking-[0.3em] uppercase hidden sm:block">
-                        SNITCH
-                    </span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <p className="text-[14px] font-semibold text-[#1F1F1F]">Deepanshu Sharma</p>
-                    <div className="w-10 h-10 rounded-full bg-[#F3EFE6] text-[#D8B03B] flex items-center justify-center font-bold text-[14px]">
-                        DS
-                    </div>
-                </div>
-            </nav>
+            <div className="px-8 lg:px-16 py-4 shrink-0">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="p-2 -ml-2 text-[#D8B03B] hover:bg-[#F0EFEB] rounded-full transition-colors inline-block"
+                >
+                    <ArrowLeft size={24} strokeWidth={1.5} />
+                </button>
+            </div>
 
             {/* Main Workspace */}
             <div className="flex-1 max-w-[1200px] w-full mx-auto px-8 lg:px-16">

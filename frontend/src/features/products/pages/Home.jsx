@@ -29,42 +29,6 @@ const Home = () => {
 
   return (
     <div className="bg-[#FBF9F5] min-h-screen text-[#1B1C1A] font-sans selection:bg-[#D4AF37] selection:text-white">
-      {/* Navigation */}
-      <nav className="h-[90px] flex items-center justify-between px-6 lg:px-20 border-b border-[#D8B03B]/20 sticky top-0 z-50 bg-[#FBF9F5]/90 backdrop-blur-md">
-        <div className="flex items-center gap-6 flex-1">
-            <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors md:hidden">
-                <Menu size={24} strokeWidth={1.5} />
-            </button>
-            <div className="hidden md:flex gap-8 text-[12px] font-bold tracking-widest uppercase text-[#1B1C1A]">
-                <span className="hover:text-[#D8B03B] cursor-pointer transition-colors">Men</span>
-                <span className="hover:text-[#D8B03B] cursor-pointer transition-colors">Women</span>
-                <span className="hover:text-[#D8B03B] cursor-pointer transition-colors">New Arrivals</span>
-            </div>
-        </div>
-        
-        <div 
-            onClick={() => navigate('/')}
-            className="text-[28px] font-bold text-[#D8B03B] tracking-[0.3em] uppercase cursor-pointer hover:opacity-80 transition-opacity flex-1 text-center"
-            style={{ fontFamily: "Playfair Display, serif" }}
-        >
-            SNITCH
-        </div>
-
-        <div className="flex items-center justify-end gap-6 flex-1">
-            <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors hidden md:block">
-                <Search size={22} strokeWidth={1.5} />
-            </button>
-            <button className="text-[13px] font-semibold tracking-widest uppercase hidden md:block hover:text-[#D8B03B] transition-colors" onClick={()=> navigate("/login")}>
-                Sign In
-            </button>
-            <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors relative">
-                <ShoppingBag size={24} strokeWidth={1.5} />
-                <span className="absolute -top-1 -right-2 w-4 h-4 bg-[#D8B03B] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                    0
-                </span>
-            </button>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <div className="relative w-full h-[70vh] bg-[#ECE7DE] overflow-hidden flex items-center justify-center">

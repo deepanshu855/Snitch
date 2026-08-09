@@ -135,42 +135,7 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-[#FBF9F5] min-h-screen md:h-screen text-[#1B1C1A] font-sans selection:bg-[#D8B03B] selection:text-white flex flex-col md:overflow-hidden">
-      {/* Navigation */}
-      <nav className="h-[90px] flex-shrink-0 flex items-center justify-between px-6 lg:px-20 border-b border-[#D8B03B]/20 bg-[#FBF9F5]/90 backdrop-blur-md z-50">
-        <div className="flex items-center gap-6 flex-1">
-          <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors md:hidden">
-            <Menu size={24} strokeWidth={1.5} />
-          </button>
-          <div className="hidden md:flex gap-8 text-[12px] font-bold tracking-widest uppercase text-[#1B1C1A]">
-            <span className="hover:text-[#D8B03B] cursor-pointer transition-colors" onClick={() => navigate('/')}>Home</span>
-            <span className="hover:text-[#D8B03B] cursor-pointer transition-colors">Men</span>
-            <span className="hover:text-[#D8B03B] cursor-pointer transition-colors">Women</span>
-          </div>
-        </div>
 
-        <div
-          onClick={() => navigate('/')}
-          className="text-[28px] font-bold text-[#D8B03B] tracking-[0.3em] uppercase cursor-pointer hover:opacity-80 transition-opacity flex-1 text-center"
-          style={{ fontFamily: "Playfair Display, serif" }}
-        >
-          SNITCH
-        </div>
-
-        <div className="flex items-center justify-end gap-6 flex-1">
-          <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors hidden md:block">
-            <Search size={22} strokeWidth={1.5} />
-          </button>
-          <button className="text-[13px] font-semibold tracking-widest uppercase hidden md:block hover:text-[#D8B03B] transition-colors" onClick={() => navigate("/login")}>
-            Sign In
-          </button>
-          <button className="text-[#1B1C1A] hover:text-[#D8B03B] transition-colors relative">
-            <ShoppingBag size={24} strokeWidth={1.5} />
-            <span className="absolute -top-1 -right-2 w-4 h-4 bg-[#D8B03B] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-              0
-            </span>
-          </button>
-        </div>
-      </nav>
 
       {/* Main Content Split Layout */}
       <div className="flex-1 flex flex-col md:flex-row md:h-[calc(100vh-90px)]">

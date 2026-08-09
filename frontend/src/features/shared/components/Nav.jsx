@@ -50,10 +50,10 @@ const Nav = () => {
           {/* Seller Links */}
           {user?.role === "seller" && (
             <div className="flex items-center gap-4 mr-4 border-r pr-4" style={{ borderColor: tokens.border }}>
-              <Link to="/dashboard" className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] font-medium transition-opacity hover:opacity-70" style={{ color: tokens.onSurface }}>
+              <Link to="/seller/dashboard" className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] font-medium transition-opacity hover:opacity-70" style={{ color: tokens.onSurface }}>
                 <LayoutDashboard size={14} /> Dashboard
               </Link>
-              <Link to="/create-product" className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] font-medium transition-opacity hover:opacity-70" style={{ color: tokens.onSurface }}>
+              <Link to="/seller/create" className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] font-medium transition-opacity hover:opacity-70" style={{ color: tokens.onSurface }}>
                 <PlusSquare size={14} /> Create Product
               </Link>
             </div>
@@ -140,10 +140,10 @@ const Nav = () => {
 
           {user?.role === "seller" && (
             <div className="flex flex-col gap-4 border-b pb-6" style={{ borderColor: tokens.border }}>
-              <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-[11px] uppercase tracking-[0.15em] font-medium flex items-center gap-3" style={{ color: tokens.onSurface }}>
+              <Link to="/seller/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="text-[11px] uppercase tracking-[0.15em] font-medium flex items-center gap-3" style={{ color: tokens.onSurface }}>
                 <LayoutDashboard size={16} /> Seller Dashboard
               </Link>
-              <Link to="/create-product" onClick={() => setIsMobileMenuOpen(false)} className="text-[11px] uppercase tracking-[0.15em] font-medium flex items-center gap-3" style={{ color: tokens.onSurface }}>
+              <Link to="/seller/create" onClick={() => setIsMobileMenuOpen(false)} className="text-[11px] uppercase tracking-[0.15em] font-medium flex items-center gap-3" style={{ color: tokens.onSurface }}>
                 <PlusSquare size={16} /> Create Product
               </Link>
             </div>

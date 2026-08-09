@@ -38,28 +38,7 @@ const Dashboard = () => {
 
   return (
     <div className="bg-[#F8F6F2] min-h-screen text-[#1F1F1F] font-sans pb-16 selection:bg-[#D8B03B] selection:text-white">
-      {/* Navigation */}
-      <nav className="h-[80px] flex items-center justify-between px-6 lg:px-12 xl:px-20">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 -ml-2 text-[#D8B03B] hover:bg-black/5 rounded-full transition-colors"
-          >
-            <ArrowLeft size={24} strokeWidth={1.5} />
-          </button>
-          <span className="text-[20px] font-bold text-[#D8B03B] tracking-[0.3em] uppercase hidden sm:block">
-            SNITCH
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[13px] font-bold text-[#1F1F1F]">
-            Deepanshu Sharma
-          </span>
-          <div className="w-9 h-9 rounded-full bg-[#F3EFE6] text-[#D8B03B] flex items-center justify-center font-bold text-[13px]">
-            DS
-          </div>
-        </div>
-      </nav>
+
 
       <div className="max-w-[1600px] mx-auto px-6 lg:px-12 xl:px-20 mt-2">
         {/* Header Section */}
