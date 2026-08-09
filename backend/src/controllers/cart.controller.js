@@ -6,8 +6,6 @@ export const addItemToCart = async (req, res, next) => {
   const { productId, variantId } = req.params;
   const quantity = req.body?.quantity || 1;
 
-  console.log(quantity);
-
   const product = await productModel.findOne({
     _id: productId,
     "variants._id": variantId,
@@ -99,5 +97,153 @@ export const getCart = async (req, res, next) => {
     success: true,
     message: "Cart fetched successfully",
     cart,
+  });
+};
+
+export const incrementCartQuantity = async (req, res, next) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const stock = await variantStock(productId, variantId);
+
+  const cart = await cartModel.findOne({ user: req.user.id });
+
+  if (!cart) {
+    const err = new Error("Cart not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const quantityInCart = cart.items.find(
+    (item) =>
+      item.product.toString() === productId &&
+      item.variant.toString() === variantId,
+  ).quantity;
+
+  if (quantityInCart + 1 > stock) {
+    const err = new Error(
+      `Only ${stock} items left in stock. and you already have ${quantityInCart} items in your cart`,
+    );
+    err.status = 400;
+    return next(err);
+  }
+
+  await cartModel.findOneAndUpdate(
+    {
+      user: req.user.id,
+      "items.product": productId,
+      "items.variant": variantId,
+    },
+    {
+      $inc: { "items.$.quantity": 1 },
+    },
+    { new: true },
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Cart Item quantity incremented successfully",
+  });
+};
+
+export const decrementCartQuantity = async (req, res, next) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const stock = await variantStock(productId, variantId);
+
+  const cart = await cartModel.findOne({ user: req.user.id });
+
+  if (!cart) {
+    const err = new Error("Cart not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const quantityInCart = cart.items.find(
+    (item) =>
+      item.product.toString() === productId &&
+      item.variant.toString() === variantId,
+  ).quantity;
+
+  if (quantityInCart - 1 < 1) {
+    const err = new Error("Qunaity cannot be less than 1");
+    err.status = 400;
+    return next(err);
+  }
+
+  await cartModel.findOneAndUpdate(
+    {
+      user: req.user.id,
+      "items.product": productId,
+      "items.variant": variantId,
+    },
+    { $inc: { "items.$.quantity": -1 } },
+    { new: true },
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Cart item decremented succesfully",
+  });
+};
+
+export const deleteItemInCart = async (req, res, next) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const cart = await cartModel.findOne({ user: req.user.id });
+
+  if (!cart) {
+    const err = new Error("Cart not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  await cartModel.findOneAndUpdate(
+    {
+      user: req.user.id,
+      "items.product": productId,
+      "items.variant": variantId,
+    },
+    {
+      $pull: { items: { product: productId, variant: variantId } },
+    },
+    { new: true },
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Cart item deleted successfully",
   });
 };
