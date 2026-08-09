@@ -13,8 +13,9 @@ const cartSlice = createSlice({
       const { productId, variantId } = action.payload;
 
       state.items = state.items.map((item) => {
+        const itemProductId = item.product?._id || item.product;
         if (
-          item.product.toString() === productId &&
+          itemProductId.toString() === productId &&
           item.variant.toString() === variantId
         ) {
           return {
@@ -30,8 +31,9 @@ const cartSlice = createSlice({
       const { productId, variantId } = action.payload;
 
       state.items = state.items.map((item) => {
+        const itemProductId = item.product?._id || item.product;
         if (
-          item.product.toString() === productId &&
+          itemProductId.toString() === productId &&
           item.variant.toString() === variantId
         ) {
           return {

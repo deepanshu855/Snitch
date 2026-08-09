@@ -5,7 +5,7 @@ import Nav from "../features/shared/components/Nav";
 const AppLayout = () => {
   return (
     <>
-      {/* <Nav /> */}
+      <Nav />
       <Outlet />
     </>
   );

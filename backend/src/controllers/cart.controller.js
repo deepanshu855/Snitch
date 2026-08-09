@@ -19,7 +19,7 @@ export const addItemToCart = async (req, res, next) => {
 
   const stock = await variantStock(productId, variantId);
 
-  const cart =
+  let cart =
     (await cartModel.findOne({ user: req.user.id })) ||
     (await cartModel.create({ user: req.user.id }));
 
@@ -42,7 +42,7 @@ export const addItemToCart = async (req, res, next) => {
       err.status = 400;
       return next(err);
     } else {
-      await cartModel.findOneAndUpdate(
+      cart = await cartModel.findOneAndUpdate(
         {
           user: req.user.id,
           "items.product": productId,
@@ -52,6 +52,7 @@ export const addItemToCart = async (req, res, next) => {
         { new: true },
       );
 
+      await cart.populate("items.product");
       return res.status(200).json({
         success: true,
         message: "Cart updated successfully",
@@ -77,6 +78,7 @@ export const addItemToCart = async (req, res, next) => {
 
   await cart.save();
 
+  await cart.populate("items.product");
   res.status(200).json({
     success: true,
     message: "Product added to cart successfully",
@@ -87,7 +89,7 @@ export const addItemToCart = async (req, res, next) => {
 export const getCart = async (req, res, next) => {
   const { id } = req.user;
 
-  let cart = await cartModel.findOne({ user: id });
+  let cart = await cartModel.findOne({ user: id }).populate("items.product");
 
   if (!cart) {
     cart = await cartModel.create({ user: id });
@@ -116,7 +118,7 @@ export const incrementCartQuantity = async (req, res, next) => {
 
   const stock = await variantStock(productId, variantId);
 
-  const cart = await cartModel.findOne({ user: req.user.id });
+  let cart = await cartModel.findOne({ user: req.user.id });
 
   if (!cart) {
     const err = new Error("Cart not found");
@@ -138,7 +140,7 @@ export const incrementCartQuantity = async (req, res, next) => {
     return next(err);
   }
 
-  await cartModel.findOneAndUpdate(
+  cart = await cartModel.findOneAndUpdate(
     {
       user: req.user.id,
       "items.product": productId,
@@ -150,9 +152,11 @@ export const incrementCartQuantity = async (req, res, next) => {
     { new: true },
   );
 
+  await cart.populate("items.product");
   res.status(200).json({
     success: true,
     message: "Cart Item quantity incremented successfully",
+    cart,
   });
 };
 
@@ -172,7 +176,7 @@ export const decrementCartQuantity = async (req, res, next) => {
 
   const stock = await variantStock(productId, variantId);
 
-  const cart = await cartModel.findOne({ user: req.user.id });
+  let cart = await cartModel.findOne({ user: req.user.id });
 
   if (!cart) {
     const err = new Error("Cart not found");
@@ -192,7 +196,7 @@ export const decrementCartQuantity = async (req, res, next) => {
     return next(err);
   }
 
-  await cartModel.findOneAndUpdate(
+  cart = await cartModel.findOneAndUpdate(
     {
       user: req.user.id,
       "items.product": productId,
@@ -202,9 +206,11 @@ export const decrementCartQuantity = async (req, res, next) => {
     { new: true },
   );
 
+  await cart.populate("items.product");
   res.status(200).json({
     success: true,
     message: "Cart item decremented succesfully",
+    cart,
   });
 };
 
@@ -222,7 +228,7 @@ export const deleteItemInCart = async (req, res, next) => {
     return next(err);
   }
 
-  const cart = await cartModel.findOne({ user: req.user.id });
+  let cart = await cartModel.findOne({ user: req.user.id });
 
   if (!cart) {
     const err = new Error("Cart not found");
@@ -230,7 +236,7 @@ export const deleteItemInCart = async (req, res, next) => {
     return next(err);
   }
 
-  await cartModel.findOneAndUpdate(
+  cart = await cartModel.findOneAndUpdate(
     {
       user: req.user.id,
       "items.product": productId,
@@ -242,8 +248,10 @@ export const deleteItemInCart = async (req, res, next) => {
     { new: true },
   );
 
+  await cart.populate("items.product");
   res.status(200).json({
     success: true,
     message: "Cart item deleted successfully",
+    cart,
   });
 };
