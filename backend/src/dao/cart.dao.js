@@ -1,14 +1,71 @@
-import productModel from "../models/product.model.js";
+import mongoose from "mongoose";
+import cartModel from "../models/cart.model.js";
 
-export const variantStock = async (productId, variantId) => {
-  const product = await productModel.findOne({
-    _id: productId,
-    "variants._id": variantId,
-  });
+export const getCartDetails = async (userId) => {
 
-  const stock = product.variants.find(
-    (variant) => variant._id.toString() === variantId,
-  ).stock;
+  const cart = (await cartModel.aggregate([
+    [
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $unwind: {
+          path: "$items",
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.product",
+          foreignField: "_id",
+          as: "items.product",
+        },
+      },
+      {
+        $unwind: {
+          path: "$items.product",
+        },
+      },
+      {
+        $unwind: {
+          path: "$items.product.variants",
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $eq: ["$items.variant", "$items.product.variants._id"],
+          },
+        },
+      },
+      {
+        $addFields: {
+          itemPrice: {
+            amount: {
+              $multiply: [
+                "$items.quantity",
+                "$items.product.variants.price.amount",
+              ],
+            },
+            currency: "$items.product.variants.price.currency",
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          total: {
+            $sum: "$itemPrice.amount",
+          },
+          items: {
+            $push: "$items.product",
+          },
+        },
+      },
+    ],
+  ]))[0];
 
-  return stock;
+  return cart;
 };
