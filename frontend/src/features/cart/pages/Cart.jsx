@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useCart } from "../hooks/useCart.js";
 import { Link, useNavigate } from "react-router";
+import { Plus, Minus, X, ArrowRight, ShoppingBag } from "lucide-react";
+import { motion } from "framer-motion";
 
 /* ─── Inline styles & tokens matching the "Avenue Montaigne" design system ─── */
 const tokens = {
@@ -100,9 +102,15 @@ const Cart = () => {
         >
 
 
-          <div className="flex-1 flex flex-col items-center justify-center gap-6 pb-24 px-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex-1 flex flex-col items-center justify-center gap-6 pb-24 px-8 mt-24"
+          >
+            <ShoppingBag size={48} strokeWidth={1} style={{ color: tokens.muted }} className="mb-4 opacity-50" />
             <p
-              className="text-5xl md:text-6xl font-light leading-tight"
+              className="text-5xl md:text-6xl font-light leading-tight text-center"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 color: tokens.onSurface,
@@ -134,7 +142,7 @@ const Cart = () => {
             >
               Explore the Archive
             </Link>
-          </div>
+          </motion.div>
         </div>
       </>
     );
@@ -161,7 +169,12 @@ const Cart = () => {
             {/* ═══════════════════════════════════════════════
                             LEFT COLUMN — Cart Items (65%)
                         ═══════════════════════════════════════════════ */}
-            <div className="w-full lg:w-[65%]">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="w-full lg:w-[65%]"
+            >
               {/* Heading */}
               <div className="mb-10">
                 <h1
@@ -302,14 +315,14 @@ const Cart = () => {
                                   variantId,
                                 });
                               }}
-                              className="w-9 h-9 flex items-center justify-center text-sm font-light transition-colors hover:opacity-60"
+                              className="w-9 h-9 flex items-center justify-center transition-colors hover:opacity-60"
                               style={{
                                 color: tokens.onSurface,
                                 borderRight: `1px solid ${tokens.outlineVariant}`,
                               }}
                               aria-label="Decrease quantity"
                             >
-                              −
+                              <Minus size={12} strokeWidth={1.5} />
                             </button>
                             <span
                               className="w-10 text-center text-[11px] tracking-[0.12em] font-medium select-none"
@@ -325,14 +338,14 @@ const Cart = () => {
                                   variantId,
                                 })
                               }
-                              className="w-9 h-9 flex items-center justify-center text-sm font-light transition-colors hover:opacity-60"
+                              className="w-9 h-9 flex items-center justify-center transition-colors hover:opacity-60"
                               style={{
                                 color: tokens.onSurface,
                                 borderLeft: `1px solid ${tokens.outlineVariant}`,
                               }}
                               aria-label="Increase quantity"
                             >
-                              +
+                              <Plus size={12} strokeWidth={1.5} />
                             </button>
                           </div>
 
@@ -345,9 +358,10 @@ const Cart = () => {
                                 variantId
                               })
                             }}
-                            className="text-[10px] uppercase tracking-[0.22em] font-medium transition-all duration-200 hover:underline hover:opacity-70"
+                            className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] font-bold transition-all duration-200 hover:opacity-60"
                             style={{ color: tokens.muted }}
                           >
+                            <X size={12} strokeWidth={1.5} />
                             Remove
                           </button>
                         </div>
@@ -393,12 +407,17 @@ const Cart = () => {
                   <p>100% Guaranteed</p>
                 </div>
               </div>
-            </div>
+              </motion.div>
 
             {/* ═══════════════════════════════════════════════
                             RIGHT COLUMN — Order Summary (35%, Sticky)
                         ═══════════════════════════════════════════════ */}
-            <div className="w-full lg:w-[35%] lg:sticky lg:top-28">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+              className="w-full lg:w-[35%] lg:sticky lg:top-28"
+            >
               <div
                 className="p-8"
                 style={{
@@ -499,14 +518,14 @@ const Cart = () => {
                 {/* Primary CTA */}
                 <button
                   id="proceed-checkout"
-                  className="w-full py-4 mb-3 text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-300"
+                  className="w-full py-4 mb-3 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.25em] font-bold transition-all duration-300 group"
                   style={{
                     backgroundColor: tokens.onSurface,
                     color: tokens.surface,
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = tokens.primary;
-                    e.currentTarget.style.color = tokens.onSurface;
+                    e.currentTarget.style.color = tokens.surfaceLowest;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = tokens.onSurface;
@@ -514,6 +533,7 @@ const Cart = () => {
                   }}
                 >
                   Proceed to Checkout
+                  <ArrowRight size={14} strokeWidth={1.5} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </button>
 
                 {/* Secondary ghost CTA */}
@@ -544,7 +564,7 @@ const Cart = () => {
                   Free returns within 14 days · Authenticity guaranteed
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
