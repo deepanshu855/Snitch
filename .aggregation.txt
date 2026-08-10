@@ -1,0 +1,55 @@
+[
+  {
+    '$match': {
+      'user': new ObjectId('6a6d71eae63017ddcefb31a0')
+    }
+  }, {
+    '$unwind': {
+      'path': '$items'
+    }
+  }, {
+    '$lookup': {
+      'from': 'products', 
+      'localField': 'items.product', 
+      'foreignField': '_id', 
+      'as': 'items.product'
+    }
+  }, {
+    '$unwind': {
+      'path': '$items.product'
+    }
+  }, {
+    '$unwind': {
+      'path': '$items.product.variants'
+    }
+  }, {
+    '$match': {
+      '$expr': {
+        '$eq': [
+          '$items.variant', '$items.product.variants._id'
+        ]
+      }
+    }
+  }, {
+    '$addFields': {
+      'itemPrice': {
+        'amount': {
+          '$multiply': [
+            '$items.quantity', '$items.product.variants.price.amount'
+          ]
+        }, 
+        'currency': '$items.product.variants.price.currency'
+      }
+    }
+  }, {
+    '$group': {
+      '_id': '$_id', 
+      'total': {
+        '$sum': '$itemPrice.amount'
+      }, 
+      'items': {
+        '$push': '$items.product'
+      }
+    }
+  }
+]
