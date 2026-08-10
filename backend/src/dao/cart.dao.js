@@ -29,14 +29,18 @@ export const getCartDetails = async (userId) => {
         },
       },
       {
-        $unwind: {
-          path: "$items.product.variants",
-        },
-      },
-      {
-        $match: {
-          $expr: {
-            $eq: ["$items.variant", "$items.product.variants._id"],
+        $addFields: {
+          matchingVariant: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$items.product.variants",
+                  as: "variant",
+                  cond: { $eq: ["$$variant._id", "$items.variant"] },
+                },
+              },
+              0,
+            ],
           },
         },
       },
@@ -46,21 +50,22 @@ export const getCartDetails = async (userId) => {
             amount: {
               $multiply: [
                 "$items.quantity",
-                "$items.product.variants.price.amount",
+                "$matchingVariant.price.amount",
               ],
             },
-            currency: "$items.product.variants.price.currency",
+            currency: "$matchingVariant.price.currency",
           },
         },
       },
       {
         $group: {
           _id: "$_id",
+          user: { $first: "$user" },
           total: {
             $sum: "$itemPrice.amount",
           },
           items: {
-            $push: "$items.product",
+            $push: "$items",
           },
         },
       },

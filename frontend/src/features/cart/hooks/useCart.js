@@ -29,13 +29,13 @@ export const useCart = () => {
 
   const handleIncrementItemQuantity = async ({ productId, variantId }) => {
     const data = await incrementQuantity({ productId, variantId });
-    dispatch(incrementCartItem({ productId, variantId }));
+    await handleGetCart();
     return data;
   };
 
   const handleDecrementItemQuantity = async ({ productId, variantId }) => {
     const data = await decrementQuantity({ productId, variantId });
-    dispatch(decrementCartItem({ productId, variantId }));
+    await handleGetCart();
     return data;
   };
 

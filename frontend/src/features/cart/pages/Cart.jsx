@@ -58,11 +58,8 @@ const Cart = () => {
   };
 
   /* ─── Derived totals ─── */
-  const subtotal =
-    cartItems?.reduce((sum, item) => {
-      const qty = quantities[item._id] ?? item.quantity ?? 1;
-      return sum + (item.price?.amount ?? 0) * qty;
-    }, 0) ?? 0;
+  const cartTotal = useSelector((state) => state.cart.totalPrice);
+  const subtotal = cartTotal ?? 0;
 
   const freeShippingThreshold = 15000;
   const shippingFree = subtotal >= freeShippingThreshold;
@@ -206,8 +203,7 @@ const Cart = () => {
                   } = item;
                   const variantDetail = getVariantDetails(product, variantId);
                   const imageUrl = getDisplayImage(product, variantDetail);
-                  const displayPrice =
-                    price ?? variantDetail?.price ?? product?.price;
+                  const displayPrice = price; // From API response
                   const qty = quantities[_id] ?? item.quantity ?? 1;
                   const attributes = variantDetail?.attributes ?? {};
                   const stock = variantDetail?.stock;
