@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProducts } from "../hooks/useProducts.js";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -22,9 +22,11 @@ const tokens = {
 };
 
 const Dashboard = () => {
-  const { handleGetSellerProducts } = useProducts();
+  const { handleGetSellerProducts, handleDeleteProduct } = useProducts();
   const products = useSelector((state) => state.product.sellerProducts) || [];
   const navigate = useNavigate();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   useEffect(() => {
     handleGetSellerProducts();
@@ -165,7 +167,8 @@ const Dashboard = () => {
                       className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm text-red-500 hover:bg-white hover:scale-105 transition-all"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Handle delete
+                        setProductToDelete(product._id);
+                        setDeleteModalOpen(true);
                       }}
                     >
                       <Trash2 size={14} strokeWidth={1.5} />
@@ -224,6 +227,60 @@ const Dashboard = () => {
             <p className="text-[9px] uppercase tracking-[0.2em] font-bold" style={{ color: tokens.muted }}>
               End of list
             </p>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm" onClick={() => setDeleteModalOpen(false)}>
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="p-8 max-w-sm w-full shadow-2xl"
+              style={{ backgroundColor: tokens.surface, border: `1px solid ${tokens.outlineVariant}` }}
+            >
+              <h3 
+                className="text-2xl mb-3 leading-tight" 
+                style={{ fontFamily: "'Cormorant Garamond', serif", color: tokens.onSurface }}
+              >
+                Delete Piece
+              </h3>
+              <p 
+                className="text-xs mb-8 leading-relaxed" 
+                style={{ color: tokens.onSurfaceVariant }}
+              >
+                Are you sure you want to permanently remove this piece from your archive? This action cannot be undone.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  className="w-full py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold border transition-colors flex items-center justify-center"
+                  style={{ borderColor: tokens.outlineVariant, color: tokens.onSurface }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = tokens.primary; e.currentTarget.style.color = tokens.primary; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = tokens.outlineVariant; e.currentTarget.style.color = tokens.onSurface; }}
+                  onClick={() => {
+                    setDeleteModalOpen(false);
+                    setProductToDelete(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="w-full py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold transition-colors flex items-center justify-center text-white"
+                  style={{ backgroundColor: "#ef4444" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#dc2626"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; }}
+                  onClick={() => {
+                    handleDeleteProduct(productToDelete);
+                    setDeleteModalOpen(false);
+                    setProductToDelete(null);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
       </div>

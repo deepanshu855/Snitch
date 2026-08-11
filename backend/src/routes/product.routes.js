@@ -6,6 +6,8 @@ import {
   getSellerProductsController,
   productDetailsController,
   addProductVariant,
+  updateProductDetails,
+  deleteProduct,
 } from "../controllers/product.controller.js";
 import { productValidator } from "../validators/product.validator.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -15,7 +17,7 @@ const productRouter = Router();
 productRouter.post(
   "/",
   authenticateSeller,
-  upload.array("images", 7),
+  upload.array("images", 2),
   productValidator,
   createProductController,
 );
@@ -29,5 +31,19 @@ productRouter.post(
   upload.array("images", 7),
   addProductVariant,
 );
+
+productRouter.patch(
+  "/update/:productId",
+  authenticateSeller,
+  productValidator,
+  updateProductDetails,
+);
+
+productRouter.delete(
+  "/delete/:productId",
+  authenticateSeller,
+  deleteProduct
+)
+
 
 export default productRouter;

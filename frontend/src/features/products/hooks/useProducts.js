@@ -2,6 +2,7 @@ import { CloudCog } from "lucide-react";
 import {
   addProductVariant,
   createProduct,
+  deleteProduct,
   getAllProducts,
   getProductDetails,
   getSellerProducts,
@@ -10,6 +11,7 @@ import {
   setSellerProducts,
   setProducts,
   setProduct,
+  setDeleteProduct,
 } from "../state/product.slice.js";
 import { useDispatch } from "react-redux";
 
@@ -45,11 +47,18 @@ export const useProducts = () => {
     return data.product;
   };
 
+  const handleDeleteProduct = async (productId) => {
+    const data = await deleteProduct(productId);
+    dispatch(setDeleteProduct(productId));
+    return data;
+  };
+
   return {
     handleCreateProduct,
     handleGetSellerProducts,
     handleGetAllProducts,
     handleGetProductDetails,
     handleAddVariant,
+    handleDeleteProduct,
   };
 };

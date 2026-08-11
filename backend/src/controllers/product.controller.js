@@ -91,8 +91,6 @@ export const addProductVariant = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(req.files);
-
   const files = req.files;
   let images = [];
   if (files || files.length !== 0) {
@@ -128,6 +126,66 @@ export const addProductVariant = async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Variant added successfully",
+    product,
+  });
+};
+
+export const updateProductDetails = async (req, res, next) => {
+  const { productId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    seller: req.user.id,
+  });
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const { title, description, priceAmount, priceCurrency } = req.body;
+
+  await productModel.findOneAndUpdate(
+    {
+      _id: productId,
+    },
+    {
+      title: title || product.title,
+      description: description || product.description,
+      price: {
+        amount: Number(priceAmount) || product.price.amount,
+        currency: priceCurrency || price.product.currency,
+      },
+    },
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Product details uopdated successfully",
+    product,
+  });
+};
+
+export const deleteProduct = async (req, res, next) => {
+  const { productId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    seller: req.user.id,
+  });
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  await productModel.findByIdAndDelete(productId);
+
+  res.status(200).json({
+    success: true,
+    message: "Product deleted successfully",
     product,
   });
 };

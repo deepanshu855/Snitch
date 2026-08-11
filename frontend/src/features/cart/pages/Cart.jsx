@@ -4,6 +4,7 @@ import { useCart } from "../hooks/useCart.js";
 import { Link, useNavigate } from "react-router";
 import { Plus, Minus, X, ArrowRight, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
+import { useRazorpay } from "react-razorpay";
 
 /* ─── Inline styles & tokens matching the "Avenue Montaigne" design system ─── */
 const tokens = {
@@ -34,6 +35,7 @@ const Cart = () => {
 
   /* Local quantity state — key: cartItem._id, value: number */
   const [quantities, setQuantities] = useState({});
+  const { error, isLoading, Razorpay } = useRazorpay();
 
   useEffect(() => {
     handleGetCart();
@@ -144,6 +146,33 @@ const Cart = () => {
       </>
     );
   }
+
+  /* Razorpay checkout handler */
+  const handlePayment = () => {
+    const options = {
+      key: "rzp_test_TNys1bSdhv3p4O",
+      amount: 50000, // Amount in paise
+      currency: "INR",
+      name: "Test Company",
+      description: "Test Transaction",
+      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
+      handler: (response) => {
+        console.log(response);
+        alert("Payment Successful!");
+      },
+      prefill: {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  };
 
   return (
     <>
@@ -527,6 +556,7 @@ const Cart = () => {
                     e.currentTarget.style.backgroundColor = tokens.onSurface;
                     e.currentTarget.style.color = tokens.surface;
                   }}
+                  onClick={handlePayment}
                 >
                   Proceed to Checkout
                   <ArrowRight size={14} strokeWidth={1.5} className="transition-transform duration-300 group-hover:translate-x-1" />

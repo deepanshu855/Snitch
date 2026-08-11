@@ -29,3 +29,13 @@ export const addProductVariant = async (productId, formData) => {
   const response = await instance.post(`/${productId}/variants`, formData);
   return response.data;
 };
+
+export const deleteProduct= async (productId)=> {
+  const response=await instance.delete(`/delete/${productId}`);
+  return response.data;
+}
+
+export const updateProductDetails= async(productId, {title, description, priceAmount, priceCurrency})=> {
+  const response=await instance.patch(`/update/${productId}`, {title, description, priceAmount, priceCurrency});
+  return response.data;
+}
