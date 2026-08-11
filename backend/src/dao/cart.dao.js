@@ -50,10 +50,20 @@ export const getCartDetails = async (userId) => {
             amount: {
               $multiply: [
                 "$items.quantity",
-                "$matchingVariant.price.amount",
+                {
+                  $ifNull: [
+                    "$matchingVariant.price.amount",
+                    "$items.product.price.amount",
+                  ],
+                },
               ],
             },
-            currency: "$matchingVariant.price.currency",
+            currency: {
+              $ifNull: [
+                "$matchingVariant.price.currency",
+                "$items.product.price.currency",
+              ],
+            },
           },
         },
       },

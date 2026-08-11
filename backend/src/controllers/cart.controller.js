@@ -2,6 +2,10 @@ import cartModel from "../models/cart.model.js";
 import productModel from "../models/product.model.js";
 import { variantStock } from "../dao/product.dao.js";
 import { getCartDetails } from "../dao/cart.dao.js";
+import createOrder from "../services/payment.service.js";
+import orderModel from "../models/order.model.js";
+import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js";
+import { config } from "../config/config.js";
 
 export const addItemToCart = async (req, res, next) => {
   const { productId, variantId } = req.params;
@@ -90,7 +94,7 @@ export const addItemToCart = async (req, res, next) => {
 export const getCart = async (req, res, next) => {
   const { id } = req.user;
 
-  let cart = await getCartDetails(id)
+  let cart = await getCartDetails(id);
 
   if (!cart) {
     cart = await cartModel.create({ user: id });
@@ -254,5 +258,107 @@ export const deleteItemInCart = async (req, res, next) => {
     success: true,
     message: "Cart item deleted successfully",
     cart,
+  });
+};
+
+export const createCartOrder = async (req, res, next) => {
+  const cart = await getCartDetails(req.user.id);
+
+  if (!cart) {
+    const err = new Error("Cart is empty");
+    err.status = 400;
+    return next(err);
+  }
+
+  const firstItem = cart.items[0];
+  const firstItemVariant = firstItem.product.variants.find(
+    (v) => v._id.toString() === firstItem.variant.toString()
+  );
+  const currency =
+    firstItemVariant?.price?.currency || firstItem.product.price?.currency || "INR";
+
+  const order = await createOrder({
+    amount: cart.total,
+    currency,
+  });
+
+  const payment = await orderModel.create({
+    user: req.user.id,
+    razorpay: {
+      orderId: order.id,
+    },
+    price: {
+      amount: cart.total,
+      currency,
+    },
+    orders: cart.items.map((item) => {
+      const variant = item.product.variants.find(
+        (v) => v._id.toString() === item.variant.toString()
+      );
+      
+      return {
+        title: item.product.title,
+        productId: item.product._id,
+        variantId: item.variant,
+        quantity: item.quantity,
+        images: variant?.images || item.product.images,
+        description: item.product.description,
+        price: {
+          amount: variant?.price?.amount || item.product.price?.amount,
+          currency: variant?.price?.currency || item.product.price?.currency,
+        },
+      };
+    }),
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Order created successfully",
+    order,
+  });
+};
+
+export const verifyOrder = async (req, res, next) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
+
+  const payment = await orderModel.findOne({
+    "razorpay.orderId": razorpay_order_id,
+    status: "pending",
+  });
+
+  if (!payment) {
+    const err = new Error("Order not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const isPaymentValid = validatePaymentVerification(
+    {
+      order_id: razorpay_order_id,
+      payment_id: razorpay_payment_id,
+    },
+    razorpay_signature,
+    config.RAZORPAY_KEY_SECRET,
+  );
+
+  if (!isPaymentValid) {
+    ((payment.status = "failed"), await payment.save());
+
+    const err = new Error("Payment verification failed");
+    err.status = 400;
+    return next(err);
+  }
+
+  ((payment.status = "paid"),
+    (payment.razorpay.paymentId = razorpay_payment_id));
+  payment.razorpay.signature = razorpay_signature;
+
+  await payment.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Payment successful",
+    order: payment.orders,
   });
 };

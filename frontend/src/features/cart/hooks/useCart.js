@@ -9,6 +9,8 @@ import {
   incrementQuantity,
   decrementQuantity,
   deleteItemInCart,
+  createOrder,
+  verifyPaymentOrder,
 } from "../services/cart.api";
 import { useDispatch } from "react-redux";
 
@@ -45,11 +47,31 @@ export const useCart = () => {
     return data;
   };
 
+  const handleCreateCartOrder = async () => {
+    const data = await createOrder();
+    return data;
+  };
+
+  const handleVerifyPaymentOrder = async ({
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+  }) => {
+    const data = await verifyPaymentOrder({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    });
+    return data;
+  };
+
   return {
     handleAddItemToCart,
     handleGetCart,
     handleIncrementItemQuantity,
     handleDecrementItemQuantity,
     handleDeleteItemInCart,
+    handleCreateCartOrder,
+    handleVerifyPaymentOrder,
   };
 };

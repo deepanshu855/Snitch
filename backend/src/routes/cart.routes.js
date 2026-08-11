@@ -2,10 +2,12 @@ import { Router } from "express";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
 import {
   addItemToCart,
+  createCartOrder,
   decrementCartQuantity,
   deleteItemInCart,
   getCart,
   incrementCartQuantity,
+  verifyOrder,
 } from "../controllers/cart.controller.js";
 import {
   validateAddToCart,
@@ -39,5 +41,9 @@ cartRouter.delete(
   validateCartQuantity,
   deleteItemInCart,
 );
+
+// Orders route.
+cartRouter.post("/payment/create/order", authenticateUser, createCartOrder);
+cartRouter.post("/payment/verify/order", authenticateUser, verifyOrder);
 
 export default cartRouter;

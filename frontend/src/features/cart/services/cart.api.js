@@ -36,3 +36,21 @@ export const deleteItemInCart = async ({ productId, variantId }) => {
   const response = await instance.delete(`/delete/${productId}/${variantId}`);
   return response.data;
 };
+
+export const createOrder = async () => {
+  const response = await instance.post("/payment/create/order");
+  return response.data;
+};
+
+export const verifyPaymentOrder = async ({
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+}) => {
+  const response = await instance.post("/payment/verify/order", {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+  });
+  return response.data;
+};

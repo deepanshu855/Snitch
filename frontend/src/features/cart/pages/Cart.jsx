@@ -25,11 +25,14 @@ const tokens = {
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
   const {
     handleGetCart,
     handleIncrementItemQuantity,
     handleDecrementItemQuantity,
-    handleDeleteItemInCart
+    handleDeleteItemInCart,
+    handleCreateCartOrder,
+    handleVerifyPaymentOrder
   } = useCart();
   const navigate = useNavigate();
 
@@ -82,8 +85,6 @@ const Cart = () => {
   const formatCurrency = (amount, currency = "INR") =>
     `${currency} ${Number(amount).toLocaleString("en-IN")}`;
 
-  console.log(cartItems);
-
   /* ─── Empty state ─── */
   if (!cartItems?.length) {
     return (
@@ -99,15 +100,18 @@ const Cart = () => {
             fontFamily: "'Inter', sans-serif",
           }}
         >
-
-
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="flex-1 flex flex-col items-center justify-center gap-6 pb-24 px-8 mt-24"
           >
-            <ShoppingBag size={48} strokeWidth={1} style={{ color: tokens.muted }} className="mb-4 opacity-50" />
+            <ShoppingBag
+              size={48}
+              strokeWidth={1}
+              style={{ color: tokens.muted }}
+              className="mb-4 opacity-50"
+            />
             <p
               className="text-5xl md:text-6xl font-light leading-tight text-center"
               style={{
@@ -148,25 +152,49 @@ const Cart = () => {
   }
 
   /* Razorpay checkout handler */
-  const handlePayment = () => {
+  const handlePayment = async () => {
+    const response = await handleCreateCartOrder();
+    const order = response?.order;
+
+    if (!order) {
+      console.error("Order creation failed", response);
+      return;
+    }
+
     const options = {
-      key: "rzp_test_TNys1bSdhv3p4O",
-      amount: 50000, // Amount in paise
-      currency: "INR",
-      name: "Test Company",
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_TOSwDAWWZ3hlxi",
+      amount: order.amount, // Amount in paise
+      currency: order.currency,
+      name: "Snitch",
       description: "Test Transaction",
-      order_id: "order_9A33XWu170gUtm", // Generate order_id on server
-      handler: (response) => {
-        console.log(response);
-        alert("Payment Successful!");
+      order_id: order.id, // Generate order_id on server
+      handler: async (response) => {
+        try {
+          const data = await handleVerifyPaymentOrder({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+          
+          if (data?.success) {
+            alert("Payment Verified and Successful!");
+            // Redirect to a success page or home
+            navigate("/");
+          } else {
+            alert("Payment Verification Failed!");
+          }
+        } catch (error) {
+          console.error("Payment Verification Error:", error);
+          alert("Payment Verification Failed! Please contact support.");
+        }
       },
       prefill: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        contact: "9999999999",
+        name: user?.fullName,
+        email: user?.email,
+        contact: user?.contact,
       },
       theme: {
-        color: "#F37254",
+        color: tokens.primary,
       },
     };
 
@@ -195,7 +223,7 @@ const Cart = () => {
             {/* ═══════════════════════════════════════════════
                             LEFT COLUMN — Cart Items (65%)
                         ═══════════════════════════════════════════════ */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
@@ -380,8 +408,8 @@ const Cart = () => {
                             onClick={() => {
                               handleDeleteItemInCart({
                                 productId: _id,
-                                variantId
-                              })
+                                variantId,
+                              });
                             }}
                             className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] font-bold transition-all duration-200 hover:opacity-60"
                             style={{ color: tokens.muted }}
@@ -432,12 +460,12 @@ const Cart = () => {
                   <p>100% Guaranteed</p>
                 </div>
               </div>
-              </motion.div>
+            </motion.div>
 
             {/* ═══════════════════════════════════════════════
                             RIGHT COLUMN — Order Summary (35%, Sticky)
                         ═══════════════════════════════════════════════ */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
@@ -559,7 +587,11 @@ const Cart = () => {
                   onClick={handlePayment}
                 >
                   Proceed to Checkout
-                  <ArrowRight size={14} strokeWidth={1.5} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={1.5}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
                 </button>
 
                 {/* Secondary ghost CTA */}
