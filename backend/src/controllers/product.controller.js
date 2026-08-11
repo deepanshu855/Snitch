@@ -189,3 +189,31 @@ export const deleteProduct = async (req, res, next) => {
     product,
   });
 };
+
+export const deleteVariant = async (req, res, next) => {
+  const { productId, variantId } = req.params;
+
+  const product = await productModel.findOne({
+    _id: productId,
+    seller: req.user.id,
+    "variants._id": variantId,
+  });
+
+  if (!product) {
+    const err = new Error("Variant not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  product.variants = product.variants.filter(
+    (variant) => variant._id.toString() !== variantId,
+  );
+
+  await product.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Varaint deleted successfully",
+    product,
+  });
+};

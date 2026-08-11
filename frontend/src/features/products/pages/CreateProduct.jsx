@@ -35,7 +35,7 @@ function CreateProduct() {
       file,
       preview: URL.createObjectURL(file)
     }));
-    setImages(prev => [...prev, ...newImages].slice(0, 7));
+    setImages(prev => [...prev, ...newImages].slice(0, 2));
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -43,7 +43,7 @@ function CreateProduct() {
     accept: {
       'image/*': []
     },
-    maxFiles: 7
+    maxFiles: 2
   });
 
   const removeImage = (e, idx) => {
@@ -53,7 +53,7 @@ function CreateProduct() {
 
   const renderSlots = () => {
     const slots = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 2; i++) {
       if (i < images.length) {
         slots.push(
           <motion.div
@@ -61,7 +61,7 @@ function CreateProduct() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="relative group overflow-hidden aspect-square border bg-white flex-1 min-w-0 rounded-sm"
+            className="relative group overflow-hidden aspect-square border bg-white rounded-sm"
             style={{ borderColor: tokens.outlineVariant }}
           >
             <img
@@ -84,7 +84,7 @@ function CreateProduct() {
         slots.push(
           <div 
             key={`empty-${i}`} 
-            className="aspect-square border border-dashed flex items-center justify-center flex-1 min-w-0 rounded-sm"
+            className="aspect-square border border-dashed flex items-center justify-center rounded-sm"
             style={{ borderColor: tokens.outlineVariant, backgroundColor: tokens.surfaceLow, color: tokens.muted }}
           >
             <Plus size={14} strokeWidth={1.5} />
@@ -260,12 +260,17 @@ function CreateProduct() {
 
           {/* Right Card - Image Upload */}
           <div className="flex-1 p-8 lg:p-10 flex flex-col shadow-sm" style={{ backgroundColor: tokens.surfaceLowest }}>
-            <div className="flex items-center justify-between mb-6">
-              <label className="text-[9px] uppercase tracking-[0.2em] font-bold block" style={{ color: tokens.onSurface }}>
-                Images
-              </label>
-              <span className="text-[9px] uppercase tracking-[0.1em]" style={{ color: tokens.muted }}>
-                Max 7
+            <div className="flex flex-col mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[9px] uppercase tracking-[0.2em] font-bold block" style={{ color: tokens.onSurface }}>
+                  Images
+                </label>
+                <span className="text-[9px] uppercase tracking-[0.1em]" style={{ color: tokens.muted }}>
+                  Max 2
+                </span>
+              </div>
+              <span className="text-[10px]" style={{ color: tokens.muted }}>
+                These details will be displayed as thumbnail.
               </span>
             </div>
 
@@ -302,13 +307,13 @@ function CreateProduct() {
             <div className="flex items-center gap-4 my-8">
               <div className="flex-1 h-[1px]" style={{ backgroundColor: tokens.outlineVariant }}></div>
               <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: tokens.muted }}>
-                {images.length} / 7
+                {images.length} / 2
               </span>
               <div className="flex-1 h-[1px]" style={{ backgroundColor: tokens.outlineVariant }}></div>
             </div>
 
-            {/* 7 Thumbnails Row */}
-            <div className="flex gap-3">
+            {/* 2 Thumbnails (sized to 7-col grid) */}
+            <div className="grid grid-cols-7 gap-3">
               {renderSlots()}
             </div>
           </div>

@@ -3,6 +3,7 @@ import {
   addProductVariant,
   createProduct,
   deleteProduct,
+  deleteVariant,
   getAllProducts,
   getProductDetails,
   getSellerProducts,
@@ -53,6 +54,11 @@ export const useProducts = () => {
     return data;
   };
 
+  const handleDeleteVariant= async (productId, variantId)=> {
+    const data= await deleteVariant(productId, variantId);
+    return data
+  }
+
   return {
     handleCreateProduct,
     handleGetSellerProducts,
@@ -60,5 +66,6 @@ export const useProducts = () => {
     handleGetProductDetails,
     handleAddVariant,
     handleDeleteProduct,
+    handleDeleteVariant
   };
 };

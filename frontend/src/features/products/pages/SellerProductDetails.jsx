@@ -35,11 +35,14 @@ const tokens = {
 const SellerProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { handleGetProductDetails, handleAddVariant } = useProducts();
+  const { handleGetProductDetails, handleAddVariant, handleDeleteVariant } = useProducts();
   const product = useSelector((state) => state.product.product);
 
   const [showAddVariant, setShowAddVariant] = useState(false);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+  const [deleteVariantModalOpen, setDeleteVariantModalOpen] = useState(false);
+  const [variantToDelete, setVariantToDelete] = useState(null);
 
   // Form state
   const [images, setImages] = useState([]);
@@ -288,9 +291,19 @@ const SellerProductDetails = () => {
             {product.variants?.map((variant, idx) => (
               <div
                 key={idx}
-                className="p-6 border flex flex-col rounded-none"
+                className="p-6 border flex flex-col rounded-none relative group"
                 style={{ backgroundColor: tokens.surfaceLowest, borderColor: tokens.outlineVariant }}
               >
+                {/* Delete Variant Button */}
+                <button
+                  onClick={() => {
+                    setVariantToDelete(variant._id);
+                    setDeleteVariantModalOpen(true);
+                  }}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                >
+                  <Trash2 size={14} strokeWidth={2} />
+                </button>
                 <div className="flex items-center gap-5 mb-6">
                   <div 
                     className="w-20 h-24 shrink-0 overflow-hidden"
@@ -595,6 +608,61 @@ const SellerProductDetails = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Delete Variant Confirmation Modal */}
+      {deleteVariantModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm" onClick={() => setDeleteVariantModalOpen(false)}>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="p-8 max-w-sm w-full shadow-2xl"
+            style={{ backgroundColor: tokens.surface, border: `1px solid ${tokens.outlineVariant}` }}
+          >
+            <h3 
+              className="text-2xl mb-3 leading-tight" 
+              style={{ fontFamily: "'Cormorant Garamond', serif", color: tokens.onSurface }}
+            >
+              Delete Variant
+            </h3>
+            <p 
+              className="text-xs mb-8 leading-relaxed" 
+              style={{ color: tokens.onSurfaceVariant }}
+            >
+              Are you sure you want to permanently remove this variant from this piece? This action cannot be undone.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                className="w-full py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold border transition-colors flex items-center justify-center"
+                style={{ borderColor: tokens.outlineVariant, color: tokens.onSurface }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = tokens.primary; e.currentTarget.style.color = tokens.primary; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = tokens.outlineVariant; e.currentTarget.style.color = tokens.onSurface; }}
+                onClick={() => {
+                  setDeleteVariantModalOpen(false);
+                  setVariantToDelete(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold transition-colors flex items-center justify-center text-white"
+                style={{ backgroundColor: "#ef4444" }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#dc2626"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; }}
+                onClick={async () => {
+                  await handleDeleteVariant(product._id, variantToDelete);
+                  await handleGetProductDetails(id);
+                  setDeleteVariantModalOpen(false);
+                  setVariantToDelete(null);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

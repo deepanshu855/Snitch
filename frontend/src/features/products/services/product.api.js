@@ -39,3 +39,8 @@ export const updateProductDetails= async(productId, {title, description, priceAm
   const response=await instance.patch(`/update/${productId}`, {title, description, priceAmount, priceCurrency});
   return response.data;
 }
+
+export const deleteVariant= async(productId, variantId)=> {
+  const response=await instance.delete(`/delete/${productId}/${variantId}`);
+  return response.data;
+}

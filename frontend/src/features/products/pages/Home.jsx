@@ -23,7 +23,8 @@ const tokens = {
 
 const Home = () => {
   const { handleGetAllProducts } = useProducts();
-  const products = useSelector((state) => state.product.products) || [];
+  const allProducts = useSelector((state) => state.product.products) || [];
+  const products = allProducts.filter(product => product.variants && product.variants.length > 0);
   const navigate = useNavigate();
 
   useEffect(() => {

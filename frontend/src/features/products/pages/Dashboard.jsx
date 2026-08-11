@@ -32,6 +32,9 @@ const Dashboard = () => {
     handleGetSellerProducts();
   }, []);
 
+  const activeProducts = products.filter(p => p.variants && p.variants.length > 0);
+  const draftProducts = products.filter(p => !p.variants || p.variants.length === 0);
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -40,6 +43,81 @@ const Dashboard = () => {
       year: "numeric",
     });
   };
+
+  const renderProductCard = (product, index) => (
+    <motion.div
+      key={product._id}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="group flex flex-col cursor-pointer relative"
+      onClick={() => navigate(`/seller/product/${product._id}`)}
+    >
+      {/* Image Container */}
+      <div 
+        className="w-full aspect-[4/5] relative overflow-hidden mb-4"
+        style={{ backgroundColor: tokens.surfaceHigh }}
+      >
+        {(!product.variants || product.variants.length === 0) && (
+          <div className="absolute top-3 left-3 px-3 py-1.5 backdrop-blur-md bg-black/50 text-white text-[8px] uppercase tracking-[0.2em] font-bold z-10 border border-white/10">
+            Action Required: Add Variant
+          </div>
+        )}
+        {product.images && product.images.length > 0 ? (
+          <img
+            src={product.images[0].url}
+            alt={product.title}
+            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${(!product.variants || product.variants.length === 0) ? 'opacity-70 grayscale-[0.3]' : ''}`}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-[9px] uppercase font-bold tracking-[0.2em]" style={{ color: tokens.muted }}>
+            No Image
+          </div>
+        )}
+        
+        {/* Hover Overlay Actions */}
+        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+          <button 
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm text-black hover:bg-white hover:scale-105 transition-all"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/seller/product/${product._id}`);
+            }}
+          >
+            <Edit size={14} strokeWidth={1.5} />
+          </button>
+          <button 
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm text-red-500 hover:bg-white hover:scale-105 transition-all"
+            onClick={(e) => {
+              e.stopPropagation();
+              setProductToDelete(product._id);
+              setDeleteModalOpen(true);
+            }}
+          >
+            <Trash2 size={14} strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+
+      {/* Card Details */}
+      <div className="flex flex-col flex-1 px-1">
+        <h3 
+          className="text-[12px] uppercase tracking-[0.1em] font-medium truncate mb-1"
+          style={{ color: tokens.onSurface }}
+        >
+          {product.title}
+        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[11px] font-bold tracking-[0.1em]" style={{ color: tokens.secondary }}>
+            INR {product.price?.amount?.toLocaleString() || 0}
+          </p>
+        </div>
+        <p className="text-[9px] uppercase tracking-[0.15em] mt-auto" style={{ color: tokens.muted }}>
+          Listed {formatDate(product.createdAt)}
+        </p>
+      </div>
+    </motion.div>
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -123,78 +201,38 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Sections for Draft and Active Products */}
         {products.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group flex flex-col cursor-pointer"
-                onClick={() => navigate(`/seller/product/${product._id}`)}
-              >
-                {/* Image Container */}
-                <div 
-                  className="w-full aspect-[4/5] relative overflow-hidden mb-4"
-                  style={{ backgroundColor: tokens.surfaceHigh }}
+          <div className="space-y-16">
+            {draftProducts.length > 0 && (
+              <div>
+                <h2 
+                  className="text-[18px] font-light mb-6 border-b pb-4 flex items-center gap-3" 
+                  style={{ fontFamily: "'Cormorant Garamond', serif", color: tokens.onSurface, borderColor: tokens.surfaceHighest }}
                 >
-                  {product.images && product.images.length > 0 ? (
-                    <img
-                      src={product.images[0].url}
-                      alt={product.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[9px] uppercase font-bold tracking-[0.2em]" style={{ color: tokens.muted }}>
-                      No Image
-                    </div>
-                  )}
-                  
-                  {/* Hover Overlay Actions */}
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                    <button 
-                      className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm text-black hover:bg-white hover:scale-105 transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Handle edit
-                      }}
-                    >
-                      <Edit size={14} strokeWidth={1.5} />
-                    </button>
-                    <button 
-                      className="w-9 h-9 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm text-red-500 hover:bg-white hover:scale-105 transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setProductToDelete(product._id);
-                        setDeleteModalOpen(true);
-                      }}
-                    >
-                      <Trash2 size={14} strokeWidth={1.5} />
-                    </button>
-                  </div>
+                  Action Required <span className="text-[10px] uppercase tracking-[0.15em] font-bold px-2 py-1 bg-red-50 text-red-500 border border-red-100 rounded-sm font-sans" style={{fontFamily: "'Inter', sans-serif"}}>Not Listed</span>
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-8">
+                  {draftProducts.map((product, index) => renderProductCard(product, index))}
                 </div>
-
-                {/* Card Details */}
-                <div className="flex flex-col flex-1 px-1">
-                  <h3 
-                    className="text-[12px] uppercase tracking-[0.1em] font-medium truncate mb-1"
-                    style={{ color: tokens.onSurface }}
+              </div>
+            )}
+            
+            {activeProducts.length > 0 && (
+              <div>
+                {draftProducts.length > 0 && (
+                  <h2 
+                    className="text-[18px] font-light mb-6 border-b pb-4" 
+                    style={{ fontFamily: "'Cormorant Garamond', serif", color: tokens.onSurface, borderColor: tokens.surfaceHighest }}
                   >
-                    {product.title}
-                  </h3>
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[11px] font-bold tracking-[0.1em]" style={{ color: tokens.secondary }}>
-                      INR {product.price?.amount?.toLocaleString() || 0}
-                    </p>
-                  </div>
-                  <p className="text-[9px] uppercase tracking-[0.15em] mt-auto" style={{ color: tokens.muted }}>
-                    Listed {formatDate(product.createdAt)}
-                  </p>
+                    Active Listings
+                  </h2>
+                )}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-8">
+                  {activeProducts.map((product, index) => renderProductCard(product, index))}
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            )}
           </div>
         ) : (
           <motion.div 

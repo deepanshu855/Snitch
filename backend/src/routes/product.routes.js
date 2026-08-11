@@ -8,6 +8,7 @@ import {
   addProductVariant,
   updateProductDetails,
   deleteProduct,
+  deleteVariant,
 } from "../controllers/product.controller.js";
 import { productValidator } from "../validators/product.validator.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -44,6 +45,8 @@ productRouter.delete(
   authenticateSeller,
   deleteProduct
 )
+
+productRouter.delete("/delete/:productId/:variantId", authenticateSeller, deleteVariant)
 
 
 export default productRouter;
