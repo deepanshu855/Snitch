@@ -9,6 +9,7 @@ import ProductDetails from "../features/products/pages/ProductDetails";
 import Cart from "../features/cart/pages/Cart";
 import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 import AppLayout from "./AppLayout";
+import SearchResult from "../features/products/pages/SearchResult";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/products",
+        element: <SearchResult/>
       },
       {
         path: "/product/:id",

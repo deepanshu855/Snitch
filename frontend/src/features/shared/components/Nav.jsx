@@ -37,7 +37,7 @@ const Nav = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       setSearchQuery("");
     }
@@ -98,6 +98,9 @@ const Nav = () => {
                       color: tokens.onSurface, 
                     }}
                   />
+                  <button type="submit" className="transition-opacity hover:opacity-60 ml-3" style={{ color: tokens.onSurface }} onMouseDown={(e) => e.preventDefault()}>
+                    <Search size={18} strokeWidth={1.5} />
+                  </button>
                 </form>
               ) : (
                 <button onClick={() => setIsSearchOpen(true)} className="transition-opacity hover:opacity-60" style={{ color: tokens.onSurface }}>
@@ -165,7 +168,9 @@ const Nav = () => {
         >
           <div className="px-8 py-8 flex flex-col gap-8">
             <form onSubmit={handleSearch} className="flex items-center pb-3" style={{ borderBottom: `1px solid ${tokens.surfaceHighest}` }}>
-              <Search size={16} strokeWidth={1.5} className="mr-4" style={{ color: tokens.muted }} />
+              <button type="submit" className="transition-opacity hover:opacity-60 mr-4">
+                <Search size={16} strokeWidth={1.5} style={{ color: tokens.muted }} />
+              </button>
               <input
                 type="text"
                 placeholder="Search..."

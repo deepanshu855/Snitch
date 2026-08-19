@@ -30,10 +30,11 @@ export const useProducts = () => {
     return data.products;
   };
 
-  const handleGetAllProducts = async () => {
-    const data = await getAllProducts();
-    dispatch(setProducts(data.products));
-    return data.products;
+  const handleGetAllProducts = async (search, sort, page, limit) => {
+    const data = await getAllProducts(search, sort, page, limit);
+    const products = data.searchProducts || data.products || [];
+    dispatch(setProducts(products));
+    return data;
   };
 
   const handleGetProductDetails = async (productId) => {

@@ -24,7 +24,7 @@ const tokens = {
 const Home = () => {
   const { handleGetAllProducts } = useProducts();
   const allProducts = useSelector((state) => state.product.products) || [];
-  const products = allProducts.filter(product => product.variants && product.variants.length > 0);
+  const products = allProducts.filter(product => product.variants && product.variants.length > 0).slice(0, 9);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -267,6 +267,7 @@ const Home = () => {
                         e.currentTarget.style.color = tokens.onSurface;
                         e.currentTarget.style.borderColor = tokens.outlineVariant;
                     }}
+                    onClick={() => navigate('/products')}
                   >
                       View Entire Collection
                   </button>

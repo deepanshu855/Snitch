@@ -15,8 +15,15 @@ export const getSellerProducts = async () => {
   return response.data;
 };
 
-export const getAllProducts = async () => {
-  const response = await instance.get("/");
+export const getAllProducts = async (search, sort, page, limit) => {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  if (sort && sort !== "relevance") params.append("sort", sort);
+  if (page) params.append("page", page);
+  if (limit) params.append("limit", limit);
+  
+  const queryString = params.toString();
+  const response = await instance.get(queryString ? `/?${queryString}` : "/");
   return response.data;
 };
 

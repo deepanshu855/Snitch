@@ -49,12 +49,73 @@ export const getSellerProductsController = async (req, res, next) => {
 };
 
 export const getAllProductsControler = async (req, res, next) => {
-  const products = await productModel.find();
+  const { search, sort, page = 1, limit = 10 } = req.query;
+
+  // Pagination
+  const pageNo = Number(page);
+  const limitNo = Number(limit);
+  const skip = (pageNo - 1) * limitNo;
+
+  // Price sorting
+  let sortOrder = 0;
+
+  if (sort === "lowToHigh") {
+    sortOrder = 1;
+  } else if (sort === "highToLow") {
+    sortOrder = -1;
+  }
+
+  if (search) {
+    let query = productModel.find({
+      $or: [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ],
+    });
+
+    if (sortOrder !== 0) {
+      query = query.sort({ "price.amount": sortOrder });
+    }
+
+    const searchProducts = await query.skip(skip).limit(limitNo);
+
+    const totalProducts = await productModel.countDocuments({
+      $or: [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ],
+    });
+
+    const totalPages = Math.ceil(totalProducts / limitNo);
+
+    return res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      products: searchProducts,
+      totalProducts,
+      totalPages,
+      currentPage: pageNo,
+    });
+  }
+
+  let query = productModel.find();
+
+  if (sortOrder !== 0) {
+    query = query.sort({ "price.amount": sortOrder });
+  }
+
+  const products = await query.skip(skip).limit(limitNo);
+
+  const totalProducts = await productModel.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limitNo);
 
   res.status(200).json({
     success: true,
     message: "Products fetched successfully",
     products,
+    totalProducts,
+    totalPages,
+    currentPage: pageNo,
   });
 };
 
