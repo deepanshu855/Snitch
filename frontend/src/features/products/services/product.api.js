@@ -51,3 +51,8 @@ export const deleteVariant= async(productId, variantId)=> {
   const response=await instance.delete(`/delete/${productId}/${variantId}`);
   return response.data;
 }
+
+export const productRecommendation=async(productId)=>{
+  const response= await instance.get(`/${productId}/recommendations`);
+  return response.data;
+}

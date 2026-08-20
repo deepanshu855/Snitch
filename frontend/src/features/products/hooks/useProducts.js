@@ -7,6 +7,7 @@ import {
   getAllProducts,
   getProductDetails,
   getSellerProducts,
+  productRecommendation,
 } from "../services/product.api.js";
 import {
   setSellerProducts,
@@ -60,6 +61,11 @@ export const useProducts = () => {
     return data
   }
 
+  const handleProductRecommendations=async (productId) => {
+    const data=await productRecommendation(productId)
+    return data.products
+  }
+
   return {
     handleCreateProduct,
     handleGetSellerProducts,
@@ -67,6 +73,7 @@ export const useProducts = () => {
     handleGetProductDetails,
     handleAddVariant,
     handleDeleteProduct,
-    handleDeleteVariant
+    handleDeleteVariant,
+    handleProductRecommendations
   };
 };

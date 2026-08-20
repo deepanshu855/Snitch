@@ -278,3 +278,54 @@ export const deleteVariant = async (req, res, next) => {
     product,
   });
 };
+
+export const productRecommendations = async (req, res, next) => {
+  const { productId } = req.params;
+
+  const product = await productModel.findById(productId);
+
+  if (!product) {
+    const err = new Error("Product not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  const keywords = [
+    "shirt",
+    "tshirt",
+    "jeans",
+    "pants",
+    "trouser",
+    "jacket",
+    "hoodie",
+    "sweatshirt",
+    "shorts",
+    "kurta",
+  ];
+
+  let keyword = keywords.find((word) =>
+    product.title.toLowerCase().includes(word),
+  );
+
+  if (!keyword) {
+    keyword = keywords.find((word) =>
+      product.description.toLowerCase().includes(word),
+    );
+  }
+
+  const products = await productModel
+    .find({
+      _id: { $ne: product._id },
+      $or: [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ],
+    })
+    .limit(4);``
+
+  res.status(200).json({
+    success: true,
+    message: "Recommended products fetched successfully",
+    products,
+  });
+};

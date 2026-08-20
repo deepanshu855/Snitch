@@ -9,6 +9,7 @@ import {
   updateProductDetails,
   deleteProduct,
   deleteVariant,
+  productRecommendations,
 } from "../controllers/product.controller.js";
 import { productValidator } from "../validators/product.validator.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -32,21 +33,19 @@ productRouter.post(
   upload.array("images", 7),
   addProductVariant,
 );
-
 productRouter.patch(
   "/update/:productId",
   authenticateSeller,
   productValidator,
   updateProductDetails,
 );
-
 productRouter.delete(
   "/delete/:productId",
   authenticateSeller,
   deleteProduct
 )
-
 productRouter.delete("/delete/:productId/:variantId", authenticateSeller, deleteVariant)
+productRouter.get("/:productId/recommendations", productRecommendations)
 
 
 export default productRouter;
