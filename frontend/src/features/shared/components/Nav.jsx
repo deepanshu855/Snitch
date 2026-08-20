@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Search, ShoppingCart, User, Menu, X, LayoutDashboard, PlusSquare, LogOut } from 'lucide-react';
 import { setUser } from '../../auth/auth.slice';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 const tokens = {
   surface: "#fbf9f6",
@@ -29,10 +30,12 @@ const Nav = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(setUser(null));
-    navigate("/");
-  };
+  const {handleLogout}=useAuth();
+
+  const logoutSubmit=()=>{
+    handleLogout();
+    navigate("/")
+  }
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -130,7 +133,7 @@ const Nav = () => {
                 <div className="absolute right-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-48 z-50">
                   <div className="rounded-sm shadow-sm py-4" style={{ backgroundColor: tokens.surfaceLowest, border: `1px solid ${tokens.surfaceHighest}` }}>
                     <button 
-                      onClick={handleLogout} 
+                      onClick={logoutSubmit} 
                       className="w-full px-6 py-2 text-left flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] transition-colors" 
                       style={{ color: tokens.onSurface }}
                       onMouseEnter={(e) => e.currentTarget.style.color = tokens.primary}
@@ -193,7 +196,7 @@ const Nav = () => {
             )}
 
             {user ? (
-              <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-[10px] uppercase tracking-[0.2em] font-medium flex items-center gap-4" style={{ color: tokens.onSurface }}>
+              <button onClick={() => { logoutSubmit(); setIsMobileMenuOpen(false); }} className="text-[10px] uppercase tracking-[0.2em] font-medium flex items-center gap-4" style={{ color: tokens.onSurface }}>
                 <LogOut size={16} strokeWidth={1.5} /> Logout
               </button>
             ) : (

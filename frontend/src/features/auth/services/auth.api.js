@@ -31,3 +31,8 @@ export const getMe = async () => {
   const res = await instance.get("/get-me");
   return res.data;
 };
+
+export const logout = async () => {
+  const response = instance.get("/logout");
+  return response.data;
+};

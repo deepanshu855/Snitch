@@ -113,3 +113,14 @@ export const getMeController= async (req, res, next)=>{
 
   sendTokenResponse(res, user, "User fetched successfully");
 }
+
+export const logoutControler= async(req, res,next)=>{
+  const token=req.cookies.token;
+
+  res.clearCookie("token");
+
+  res.status(200).json({
+    success: true,
+    message: "Logot successfully"
+  })
+}
