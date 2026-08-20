@@ -16,13 +16,38 @@ import {
   setDeleteProduct,
 } from "../state/product.slice.js";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+
+const showToast = (message, type = "success") => {
+  toast[type](message, {
+    style: {
+      backgroundColor: "#fbf9f5",
+      color: "#1b1c1a",
+      fontFamily: "'Inter', sans-serif",
+      fontSize: "13px",
+      fontWeight: "500",
+      border: `1px solid ${type === "error" ? "#ffdad6" : "#e4e2de"}`,
+      borderRadius: "8px",
+      boxShadow: "0 12px 24px -4px rgba(0,0,0,0.04)",
+    },
+    progressStyle: {
+      background: type === "error" ? "#ba1a1a" : "#060607"
+    }
+  });
+};
 
 export const useProducts = () => {
   const dispatch = useDispatch();
 
   const handleCreateProduct = async (formData) => {
-    const data = await createProduct(formData);
-    return data.product;
+    try {
+      const data = await createProduct(formData);
+      showToast("Product created successfully", "success");
+      return data.product;
+    } catch (error) {
+      showToast(error.message || "Failed to create product", "error");
+      throw error;
+    }
   };
 
   const handleGetSellerProducts = async () => {
@@ -45,20 +70,38 @@ export const useProducts = () => {
   };
 
   const handleAddVariant = async (productId, formData) => {
-    const data = await addProductVariant(productId, formData);
-    dispatch(setProduct(data.product));
-    return data.product;
+    try {
+      const data = await addProductVariant(productId, formData);
+      dispatch(setProduct(data.product));
+      showToast("Variant added successfully", "success");
+      return data.product;
+    } catch (error) {
+      showToast(error.message || "Failed to add variant", "error");
+      throw error;
+    }
   };
 
   const handleDeleteProduct = async (productId) => {
-    const data = await deleteProduct(productId);
-    dispatch(setDeleteProduct(productId));
-    return data;
+    try {
+      const data = await deleteProduct(productId);
+      dispatch(setDeleteProduct(productId));
+      showToast("Product deleted successfully", "success");
+      return data;
+    } catch (error) {
+      showToast(error.message || "Failed to delete product", "error");
+      throw error;
+    }
   };
 
   const handleDeleteVariant= async (productId, variantId)=> {
-    const data= await deleteVariant(productId, variantId);
-    return data
+    try {
+      const data= await deleteVariant(productId, variantId);
+      showToast("Variant deleted successfully", "success");
+      return data
+    } catch (error) {
+      showToast(error.message || "Failed to delete variant", "error");
+      throw error;
+    }
   }
 
   const handleProductRecommendations=async (productId) => {
